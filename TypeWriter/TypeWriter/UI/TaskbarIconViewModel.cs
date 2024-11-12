@@ -5,7 +5,6 @@ using Prism.Mvvm;
 using System.Windows;
 using System.Windows.Media;
 using WpfColorFontDialog;
-using Xueban.TypeWriter;
 
 namespace TypeWriter.UI
 {
@@ -13,18 +12,18 @@ namespace TypeWriter.UI
     {
         private readonly AppConfigSource _appConfigSource;
         private readonly IEventAggregator _eventAggregator;
-        private readonly ISentenceSource _sentenceSource;
+        private readonly SentenceSource _sentenceSource;
         private readonly IMessenger _messenger;
         private int _typeBoxHeight;
         private int _typeBoxWidth;
         private Color _backColor;
 
-        public TaskbarIconViewModel(IEventAggregator eventAggregator, AppConfigSource appConfigSource, ISentenceSource sentenceSource, IMessenger messenger)
+        public TaskbarIconViewModel(IEventAggregator eventAggregator, AppConfigSource appConfigSource, SentenceSource sentenceSource, IMessenger messenger)
         {
             _eventAggregator = eventAggregator;
             _appConfigSource = appConfigSource;
             _sentenceSource = sentenceSource;
-            this._messenger = messenger;
+            _messenger = messenger;
             _backColor = _appConfigSource.GetConfig().BackColor;
             _typeBoxHeight = _appConfigSource.GetConfig().TypeBoxHeight;
             _typeBoxWidth = _appConfigSource.GetConfig().TypeBoxWidth;
@@ -35,7 +34,7 @@ namespace TypeWriter.UI
             get => _backColor;
             set
             {
-                if(SetProperty(ref _backColor, value))
+                if (SetProperty(ref _backColor, value))
                 {
                     _appConfigSource.GetConfig().BackColor = value;
                     _appConfigSource.SaveConfig(_appConfigSource.GetConfig());
@@ -50,7 +49,7 @@ namespace TypeWriter.UI
             get => _typeBoxHeight;
             set
             {
-                if(SetProperty(ref _typeBoxHeight, value))
+                if (SetProperty(ref _typeBoxHeight, value))
                 {
                     _appConfigSource.GetConfig().TypeBoxHeight = value;
                     _appConfigSource.SaveConfig(_appConfigSource.GetConfig());
@@ -65,7 +64,7 @@ namespace TypeWriter.UI
             get => _typeBoxWidth;
             set
             {
-                if(SetProperty(ref _typeBoxWidth, value))
+                if (SetProperty(ref _typeBoxWidth, value))
                 {
                     _appConfigSource.GetConfig().TypeBoxWidth = value;
                     _appConfigSource.SaveConfig(_appConfigSource.GetConfig());
@@ -101,7 +100,7 @@ namespace TypeWriter.UI
             };
             if (openFileDialog.ShowDialog() == true)
             {
-                _sentenceSource.Load(openFileDialog.FileName);
+                _sentenceSource.LoadText(openFileDialog.FileName);
                 _messenger.Send("load_file", "load_file");
                 //_eventAggregator.GetEvent<LoadFileEvent>().Publish();
             }

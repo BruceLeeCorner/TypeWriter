@@ -4,7 +4,6 @@ using Prism.Events;
 using Prism.Ioc;
 using System.Windows;
 using TypeWriter.UI;
-using Xueban.TypeWriter;
 
 namespace TypeWriter
 {
@@ -15,6 +14,7 @@ namespace TypeWriter
     {
         public static App Instance => (Application.Current as App)!;
         public TaskbarIcon TrayIcon => (TaskbarIcon)(this.FindResource("TaskbarIcon"));
+
         protected override Window? CreateShell()
         {
             return null;
@@ -25,7 +25,7 @@ namespace TypeWriter
             Xceed.Wpf.Toolkit.Licenser.LicenseKey = "WTK46-P1SP9-RR9GS-0RHA";
             base.OnStartup(e);
             var trayIcon = FindResource("TaskbarIcon") as TaskbarIcon; // 必须要实例化一下资源，才能激发托盘图标
-            trayIcon!.DataContext = new TaskbarIconViewModel(Container.Resolve<IEventAggregator>(), Container.Resolve<AppConfigSource>(), Container.Resolve<ISentenceSource>(),Container.Resolve<IMessenger>());
+            trayIcon!.DataContext = new TaskbarIconViewModel(Container.Resolve<IEventAggregator>(), Container.Resolve<AppConfigSource>(), Container.Resolve<SentenceSource>(), Container.Resolve<IMessenger>());
             var main = new MainWindow();
             this.MainWindow = main;
             main.Show();
@@ -34,7 +34,7 @@ namespace TypeWriter
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<IEventAggregator, EventAggregator>();
-            containerRegistry.RegisterSingleton<IMessenger,WeakReferenceMessenger>();
+            containerRegistry.RegisterSingleton<IMessenger, WeakReferenceMessenger>();
             RegisterService(containerRegistry);
             RegisterViewModel(containerRegistry);
         }
@@ -42,7 +42,7 @@ namespace TypeWriter
         private void RegisterService(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<AppConfigSource>();
-            containerRegistry.RegisterSingleton<ISentenceSource, SentenceSource>();
+            containerRegistry.RegisterSingleton<SentenceSource>();
         }
 
         private void RegisterViewModel(IContainerRegistry containerRegistry)

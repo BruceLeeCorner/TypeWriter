@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media;
 using WpfColorFontDialog;
 
-namespace Xueban.TypeWriter
+namespace TypeWriter
 {
     public class AppConfig
     {

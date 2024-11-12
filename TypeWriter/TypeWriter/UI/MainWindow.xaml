@@ -20,6 +20,7 @@
     Topmost="True"
     WindowStyle="None"
     mc:Ignorable="d">
+
     <Grid>
         <Grid.Resources>
             <tw:Color2BrushConverter x:Key="Color2BrushConverter" />
@@ -34,6 +35,9 @@
                 Focusable="True"
                 MouseDown="TextBlock_MouseDown"
                 TextWrapping="Wrap">
+                <i:Interaction.Behaviors>
+                    <i:MouseDragElementBehavior ></i:MouseDragElementBehavior>
+                </i:Interaction.Behaviors>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="PreviewTextInput">
                         <i:CallMethodAction MethodName="TextInput" TargetObject="{Binding}" />
@@ -47,7 +51,7 @@
                     FontStyle="{Binding TypedFontStyle}"
                     FontWeight="{Binding TypedFontWeight}"
                     Foreground="{Binding TypedFontColor, Converter={StaticResource Color2BrushConverter}}"
-                    Text="-{Binding TypedString}-" />
+                    Text="{Binding TypedString}" />
                 <Run
                     d:Text="World"
                     Background="{Binding BackColor, Converter={StaticResource Color2BrushConverter}}"
@@ -56,10 +60,8 @@
                     FontStyle="{Binding ToTypeFontStyle}"
                     FontWeight="{Binding ToTypeFontWeight}"
                     Foreground="{Binding ToTypeFontColor, Converter={StaticResource Color2BrushConverter}}"
-                    Text="-{Binding ToTypeString}-" />
+                    Text="{Binding ToTypeString}" />
             </TextBlock>
         </Border>
     </Grid>
 </Window>
-
-<!--  PreviewTextInput  -->

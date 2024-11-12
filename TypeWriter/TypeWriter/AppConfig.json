@@ -1,0 +1,26 @@
+﻿{
+  "TypeBoxWidth": 500,
+  "TypeBoxHeight": 50,
+  "TypedFont": {
+    "Size": 12,
+    "Weight": 400,
+    "Stretch": 5,
+    "Family": "Century",
+    "Style": "Normal",
+    "BrushColor": "#FF000000"
+  },
+  "ToTypeFont": {
+    "Size": 12,
+    "Weight": 400,
+    "Stretch": 5,
+    "Family": "Consolas",
+    "Style": "Normal",
+    "BrushColor": "#FF000000"
+  },
+  "BackColor": "#FFFF0000",
+  "IgnoreCase": true,
+  "AutoCycle": true,
+  "SpaceHide": true,
+  "DoubleSpaceHide": true,
+  "JieKaiMode": false
+}

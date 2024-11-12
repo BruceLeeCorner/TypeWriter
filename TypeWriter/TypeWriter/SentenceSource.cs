@@ -1,59 +1,157 @@
 ﻿using System.IO;
+using System.Linq;
 
-namespace Xueban.TypeWriter
+namespace TypeWriter
 {
-    internal class SentenceSource : ISentenceSource
+    internal class SentenceSource
     {
-        private readonly List<string> _lines;
-        private int _currentLineIndex;
+        private string[][] _allWords;
+        private int _nextMatchLineIndex;
+        private int _nextMatchWordIndex;
+        private int _nextMatchCharIndex;
 
         public SentenceSource()
         {
-            _lines = new List<string>();
+            LoadText(["Hi There! Stand With Ukraine 2024!"]);
         }
 
-        public void Load(string path)
+        public event Action<(string typedString, string toTypeString)> CharTyped;
+
+        public void LoadText(string path)
         {
-            if (Path.GetExtension(path).ToLower() != ".txt")
+            if (System.IO.Path.GetExtension(path).ToLower() != ".txt")
             {
                 throw new ArgumentException("The file extension must be .txt");
             }
-            _lines.Clear();
-            _currentLineIndex = 0;
-            var lines = File.ReadAllLines(path);
-            foreach (var line in lines)
+            LoadText(File.ReadAllLines(path));
+        }
+
+        public void LoadText(IEnumerable<string> lines)
+        {
+            ArgumentNullException.ThrowIfNull(nameof(lines));
+            var lines2 = lines.Where(item => !string.IsNullOrWhiteSpace(item));
+            _allWords = new string[lines2.Count()][];
+            int i = 0;
+            foreach (var item in lines2)
             {
-                if (!string.IsNullOrWhiteSpace(line))
+                _allWords[i] = item.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(item=>item.Trim()).ToArray();
+                i++;
+            }
+            _nextMatchCharIndex = 0;
+            _nextMatchWordIndex = 0;
+            _nextMatchCharIndex = 0;
+        }
+
+        public void PrevSentence()
+        {
+            _nextMatchLineIndex--;
+            if (_nextMatchLineIndex < 0)
+            {
+                _nextMatchLineIndex = -1;
+            }
+        }
+
+        public void NextSentence()
+        {
+            _nextMatchLineIndex++;
+            if(_nextMatchLineIndex >= _allWords.Length)
+            {
+                _nextMatchLineIndex = _allWords.Length;
+            }
+        }
+
+        public bool EOF
+        {
+            get
+            {
+                return _allWords == null || _allWords.Length == 0 || (_nextMatchLineIndex >= _allWords.Length)
+                    || (_nextMatchLineIndex == _allWords.Length - 1 && _nextMatchWordIndex == _allWords[_nextMatchLineIndex].Length - 1 && _nextMatchCharIndex >= _allWords[_nextMatchLineIndex][_nextMatchWordIndex].Length);
+            }
+        }
+
+        public bool EOL
+        {
+            get
+            {
+                return _nextMatchWordIndex >= _allWords[_nextMatchLineIndex].Length;
+            }
+        }
+
+        public bool EOW
+        {
+            get
+            {
+                return _nextMatchCharIndex >= _allWords[_nextMatchLineIndex][_nextMatchWordIndex].Length;
+            }
+        }
+
+        //public bool SOF
+        //{
+        //    get
+        //    {
+        //        return _allWords == null || _allWords.Length == 0 || (_nextMatchLineIndex == 0 || _nextMatchWordIndex == 0 || _nextMatchCharIndex < 0);
+        //    }
+        //}
+
+        public string TypedString
+        {
+            get
+            {
+                return (string.Join(' ', _allWords[_nextMatchLineIndex], 0, _nextMatchWordIndex)
+                    + " " + new string(_allWords[_nextMatchLineIndex][_nextMatchWordIndex].Take(_nextMatchCharIndex).ToArray())).Trim();
+                // 如果是下一个单词的第一个字母，要加空格
+            }
+        }
+
+        public string ToTypeString
+        {
+            get
+            {
+                return new string(_allWords[_nextMatchLineIndex][_nextMatchWordIndex].Take(_nextMatchCharIndex).ToArray())
+                    + " " + string.Join(" ", _allWords[_nextMatchLineIndex], _nextMatchWordIndex, _allWords[_nextMatchLineIndex].Length - _nextMatchWordIndex - 1);
+            }
+        }
+
+
+        public void OnInputChar(char @char)
+        {
+            if (EOF)
+            {
+                App.Instance.TrayIcon.ShowBalloonTip("", "End Of File", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
+                Reset();
+                return;
+            }
+
+            if (char.ToLower(@char) == char.ToLower(_allWords[_nextMatchLineIndex][_nextMatchWordIndex][_nextMatchCharIndex]))
+            {
+                _nextMatchCharIndex++;
+                if (EOW)
                 {
-                    _lines.Add(line.Trim());
+                    _nextMatchWordIndex++;
+                }
+                if(EOL)
+                {
+                    _nextMatchLineIndex++;
+                }
+                if(EOF)
+                {
+                    App.Instance.TrayIcon.ShowBalloonTip("", "End Of File", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
+                    Reset();
                 }
             }
-        }
-
-        public bool IsEmpty => _lines.Count == 0;
-        public bool OutOfUpperRange => IsEmpty || _currentLineIndex >= _lines.Count;
-        public bool OutOfLowerRange => IsEmpty || _currentLineIndex < 0;
-
-        public bool Next()
-        {
-            _currentLineIndex++;
-            if (OutOfUpperRange)
+            else
             {
-                _currentLineIndex = _lines.Count;
+                App.Instance.TrayIcon.ShowBalloonTip("","捷克,斯洛伐克", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
             }
-            return OutOfUpperRange;
+
+            CharTyped?.Invoke((TypedString, ToTypeString));
         }
 
-        public bool Prev()
+        public void Reset()
         {
-            _currentLineIndex--;
-            if (OutOfLowerRange)
-            {
-                _currentLineIndex = -1;
-            }
-            return OutOfLowerRange;
+            _nextMatchCharIndex = 0;
+            _nextMatchWordIndex = 0;
+            _nextMatchLineIndex = 0;
         }
-
-        public string? CurrentLine => _lines.Count == 0 || _currentLineIndex < 0 || _currentLineIndex >= _lines.Count ? null : _lines[_currentLineIndex];
     }
 }

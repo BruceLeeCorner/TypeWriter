@@ -4,7 +4,6 @@ using Prism.Mvvm;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Xueban.TypeWriter;
 
 namespace TypeWriter.UI
 {
@@ -13,9 +12,9 @@ namespace TypeWriter.UI
         private readonly AppConfigSource _appConfigSource;
         private readonly IEventAggregator _eventAggregator;
         private readonly IMessenger _messenger;
-        private readonly ISentenceSource _sentenceSource;
+        private readonly SentenceSource _sentenceSource;
         private Color _backColor;
-        private Sentence _sentence;
+
         private Color _toTypeFontColor;
         private FontFamily _toTypeFontFamily;
         private double _toTypeFontSize;
@@ -33,12 +32,13 @@ namespace TypeWriter.UI
         private FontWeight _typedFontWeight;
         private string _typedString;
 
-        public MainWindowViewModel(AppConfigSource appConfigSource, ISentenceSource sentenceSource, IEventAggregator eventAggregator, IMessenger messenger)
+        public MainWindowViewModel(AppConfigSource appConfigSource, SentenceSource sentenceSource, IEventAggregator eventAggregator, IMessenger messenger)
         {
             _appConfigSource = appConfigSource;
             _sentenceSource = sentenceSource;
             _eventAggregator = eventAggregator;
             _messenger = messenger;
+
             _typeBoxHeight = appConfigSource.GetConfig().TypeBoxHeight;
             _typeBoxWidth = appConfigSource.GetConfig().TypeBoxWidth;
 
@@ -47,20 +47,23 @@ namespace TypeWriter.UI
             _toTypeFontColor = appConfigSource.GetConfig().ToTypeFont.BrushColor.Color;
             _toTypeFontFamily = appConfigSource.GetConfig().ToTypeFont.Family;
             _toTypeFontSize = appConfigSource.GetConfig().ToTypeFont.Size;
-            ToTypeFontStretch = appConfigSource.GetConfig().ToTypeFont.Stretch;
-            ToTypeFontStyle = appConfigSource.GetConfig().ToTypeFont.Style;
+            _toTypeFontStretch = appConfigSource.GetConfig().ToTypeFont.Stretch;
+            _toTypeFontStyle = appConfigSource.GetConfig().ToTypeFont.Style;
+            _toTypeFontWeight = appConfigSource.GetConfig().ToTypeFont.Weight;
 
             _typedColor = appConfigSource.GetConfig().TypedFont.BrushColor.Color;
             _typedFontFamily = appConfigSource.GetConfig().TypedFont.Family;
             _typedFontSize = appConfigSource.GetConfig().TypedFont.Size;
             _typedFontStretch = appConfigSource.GetConfig().TypedFont.Stretch;
             _typedFontStyle = appConfigSource.GetConfig().TypedFont.Style;
+            _typedFontWeight = appConfigSource.GetConfig().TypedFont.Weight;
 
-            _typedString = "Hello";
-            _toTypeString = "World";
+            _typedString = "Hi";
+            _toTypeString = "There";
 
-            _sentence = new Sentence(sentenceSource.CurrentLine);
-            _messenger.Register<string,string>(this,"app_config", (o, m) =>
+            _sentenceSource.CharTyped += _sentenceSource_CharTyped;
+
+            _messenger.Register<string, string>(this, "app_config", (o, m) =>
             {
                 TypeBoxHeight = appConfigSource.GetConfig().TypeBoxHeight;
                 TypeBoxWidth = appConfigSource.GetConfig().TypeBoxWidth;
@@ -80,6 +83,12 @@ namespace TypeWriter.UI
                 TypedFontStretch = appConfigSource.GetConfig().TypedFont.Stretch;
                 TypedFontStyle = appConfigSource.GetConfig().TypedFont.Style;
                 TypedFontWeight = appConfigSource.GetConfig().TypedFont.Weight;
+            });
+
+            _messenger.Register<string, string>(this, "load_file", (o, m) =>
+            {
+                TypedString = string.Empty;
+                ToTypeString = string.Empty;
             });
 
             //_eventAggregator.GetEvent<AppConfigChangedEvent>().Subscribe(() =>
@@ -104,17 +113,18 @@ namespace TypeWriter.UI
             //    TypedFontWeight = appConfigSource.GetConfig().TypedFont.Weight;
             //}, ThreadOption.UIThread);
 
-            _eventAggregator.GetEvent<LoadFileEvent>().Subscribe(() =>
-            {
-                TypedString = string.Empty;
-                ToTypeString = string.Empty;
-            }, ThreadOption.UIThread);
+            //_eventAggregator.GetEvent<LoadFileEvent>().Subscribe(() =>
+            //{
+            //    TypedString = string.Empty;
+            //    ToTypeString = string.Empty;
+            //}, ThreadOption.UIThread);
 
-            _messenger.Register<string, string>(this, "load_file", (o, m) =>
-            {
-                TypedString = string.Empty;
-                ToTypeString = string.Empty;
-            });
+        }
+
+        private void _sentenceSource_CharTyped((string typedString, string toTypeString) obj)
+        {
+            TypedString = obj.typedString;
+            ToTypeString = obj.toTypeString;
         }
 
         #region Properties
@@ -225,30 +235,17 @@ namespace TypeWriter.UI
 
         public void TextInput(object sender, TextCompositionEventArgs e)
         {
-            if (!_sentence.IsEmpty || !_sentence.IsEnd)
-            {
-                bool isEnd = _sentence.RecvInputChar(e.Text[0], out string typed, out string toType, out bool missMatch);
-                TypedString = typed;
-                _toTypeString = toType;
-                if (isEnd)
-                {
-                    if (!_sentenceSource.IsEmpty || !_sentenceSource.OutOfUpperRange)
-                    {
-                        _sentenceSource.Next();
-                        _sentence = new Sentence(_sentenceSource.CurrentLine);
-                    }
-                }
-            }
+            _sentenceSource.OnInputChar(e.Text[0]);
         }
 
-        public void Next()
+        public void NextSentence()
         {
-            _sentenceSource.Next();
+            _sentenceSource.NextSentence();
         }
 
-        public void Prev()
+        public void PrevSentence()
         {
-            _sentenceSource.Prev();
+            _sentenceSource.PrevSentence();
         }
     }
 }

@@ -1,22 +1,22 @@
-﻿using Newtonsoft.Json;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Media;
-using Xueban.TypeWriter;
 
 namespace TypeWriter
 {
     internal class AppConfigSource
     {
-        private string _path;
+        private readonly string _path;
         private AppConfig _appConfig = null!;
-        private JsonSerializerOptions _options;
+        private readonly JsonSerializerOptions _options;
+        private readonly object _syncObj;
 
         public AppConfigSource()
         {
             _path = Path.Combine(Path.GetDirectoryName(Environment.ProcessPath)!, "AppConfig.json");
+            _syncObj = new object();
             _options = new JsonSerializerOptions
             {
                 WriteIndented = true,
@@ -30,6 +30,34 @@ namespace TypeWriter
 
         public AppConfig GetConfig()
         {
+            if (_appConfig == null)
+            {
+                lock (_syncObj)
+                {
+                    if (_appConfig == null)
+                    {
+                        try
+                        {
+                            if (File.Exists(_path))
+                            {
+                                var json = File.ReadAllText(_path, Encoding.UTF8);
+                                _appConfig = JsonSerializer.Deserialize<AppConfig>(json, _options)!;
+                            }
+                            else
+                            {
+                                GiveDefaultValue();
+                            }
+                        }
+                        catch
+                        {
+                            GiveDefaultValue();
+                        }
+                    }
+                }
+            }
+
+            return _appConfig!;
+            
             void GiveDefaultValue()
             {
                 _appConfig = new AppConfig();
@@ -47,44 +75,15 @@ namespace TypeWriter
                 _appConfig.TypedFont.Style = FontStyles.Normal;
                 _appConfig.TypedFont.Family = new FontFamily("Consolas");
                 _appConfig.TypeBoxWidth = 500;
-                _appConfig.TypeBoxHeight = 50;
+                _appConfig.TypeBoxHeight = 30;
             }
-
-            if (_appConfig == null)
-            {
-                try
-                {
-                    if (File.Exists(_path))
-                    {
-                        var json = File.ReadAllText(_path, Encoding.UTF8);
-                        JsonConvert.DeserializeObject<AppConfig>(json,new JsonSerializerSettings()
-                        {
-                            Converters =
-                            {
-                                new ColorJsonConverter2(),
-                                new FontInfoJsonConverter2(),
-                            }
-                        });
-                        //_appConfig = JsonSerializer.Deserialize<AppConfig>(json, _options)!;
-                    }
-                    else
-                    {
-                        GiveDefaultValue();
-                    }
-                }
-                catch(Exception ex)
-                {
-                    GiveDefaultValue();
-                }
-            }
-            return _appConfig!;
         }
 
         public void SaveConfig(AppConfig config)
         {
             ArgumentNullException.ThrowIfNull(nameof(config));
-            _appConfig = config;
-            var configJson = System.Text.Json.JsonSerializer.Serialize(_appConfig, _options);
+            var configJson = JsonSerializer.Serialize(config, _options);
+            _appConfig = JsonSerializer.Deserialize<AppConfig>(configJson,_options)!;
             File.WriteAllText(_path, configJson, Encoding.UTF8);
         }
     }

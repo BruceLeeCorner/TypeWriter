@@ -29,7 +29,7 @@ namespace TypeWriter
         public void LoadText(IEnumerable<string> lines)
         {
             ArgumentNullException.ThrowIfNull(nameof(lines));
-            var lines2 = lines.Where(item => !string.IsNullOrWhiteSpace(item));
+            var lines2 =  lines.Where(item => !string.IsNullOrWhiteSpace(item)).Prepend("Hi There! Stand With Ukraine 2024!");
             _allWords = new string[lines2.Count()][];
             int i = 0;
             foreach (var item in lines2)
@@ -107,8 +107,8 @@ namespace TypeWriter
         {
             get
             {
-                return new string(_allWords[_nextMatchLineIndex][_nextMatchWordIndex].Take(_nextMatchCharIndex).ToArray())
-                    + " " + string.Join(" ", _allWords[_nextMatchLineIndex], _nextMatchWordIndex, _allWords[_nextMatchLineIndex].Length - _nextMatchWordIndex - 1);
+                return new string(_allWords[_nextMatchLineIndex][_nextMatchWordIndex].Skip(_nextMatchCharIndex).ToArray())
+                    + " " + string.Join(" ", _allWords[_nextMatchLineIndex], _nextMatchWordIndex + 1, _allWords[_nextMatchLineIndex].Length - _nextMatchWordIndex - 1);
             }
         }
 
@@ -128,10 +128,13 @@ namespace TypeWriter
                 if (EOW)
                 {
                     _nextMatchWordIndex++;
+                    _nextMatchCharIndex = 0;
                 }
                 if(EOL)
                 {
                     _nextMatchLineIndex++;
+                    _nextMatchWordIndex = 0;
+                    _nextMatchCharIndex = 0;
                 }
                 if(EOF)
                 {

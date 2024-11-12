@@ -1,20 +1,18 @@
 # TypeWriter
 
-==简介==
+## About
 
 TypeWriter是一款练习盲打兼学习英文的Windows软件。
 
-
-
-==**OS**== 
+## OS 
 
 Windows 7 and  above
 
-==**.NET Framework**==  
+## .NET Framework 
 
 .NET 8 and above
 
-==**Thiry library**==
+## Third library
 
 - Prism Library
 
@@ -24,15 +22,16 @@ Windows 7 and  above
 
 - Hardcodet.NotifyIcon.Wpf
 
+## User Manual 
 
+todo
 
-==背景==
+## Roadmap
 
-编程6年发现自己还不会盲打，手速跟不上思路，严重影响了自己的编程水平。同时自己刚好在准备雅思考试，于是便基于WPF编写了这款，可加载英文素材文本练习打字的软件。
-
-==教程==
-
-视频
-
-文字
-
+- 添加功能：切换到上一句，切换到下一句，切换到上一个文件，切换到下一个文件，删除最近一次输入
+- 使用Material Design Theme
+- 托盘菜单使用图标按钮
+- 修改WpfColorFontDialog源码，使其字体颜色支持透明色和Hex Format
+- 添加配置项：匹配时是否忽略大小写
+- 完善Src使其更符合MVVM模式，开源到Github
+- WinRAR打包发布程序

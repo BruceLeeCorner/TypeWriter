@@ -14,30 +14,33 @@
     prism:ViewModelLocator.AutoWireViewModel="True"
     AllowsTransparency="True"
     BorderThickness="0"
+    WindowStartupLocation="CenterScreen"
+    PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     SizeToContent="WidthAndHeight"
     Topmost="True"
     WindowStyle="None"
     mc:Ignorable="d">
-
     <Grid>
         <Grid.Resources>
             <tw:Color2BrushConverter x:Key="Color2BrushConverter" />
         </Grid.Resources>
-        <Border BorderBrush="Aquamarine" BorderThickness="0">
+        <Border
+            Width="{Binding TypeBoxWidth}"
+            Height="{Binding TypeBoxHeight}"
+            VerticalAlignment="Center"
+            Background="{Binding BackColor, Converter={StaticResource Color2BrushConverter}}"
+            BorderBrush="Aquamarine"
+            BorderThickness="0">
             <TextBlock
                 x:Name="TextBlock"
-                Width="{Binding TypeBoxWidth}"
-                Height="{Binding TypeBoxHeight}"
+                VerticalAlignment="Center"
                 d:Background="DarkGray"
-                Background="{Binding BackColor, Converter={StaticResource Color2BrushConverter}}"
                 Focusable="True"
                 MouseDown="TextBlock_MouseDown"
-                TextWrapping="Wrap">
-                <i:Interaction.Behaviors>
-                    <i:MouseDragElementBehavior ></i:MouseDragElementBehavior>
-                </i:Interaction.Behaviors>
+                TextAlignment="Left"
+                TextWrapping="NoWrap">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="PreviewTextInput">
                         <i:CallMethodAction MethodName="TextInput" TargetObject="{Binding}" />
@@ -46,6 +49,7 @@
                 <Run
                     d:Text="Hello"
                     Background="{Binding BackColor, Converter={StaticResource Color2BrushConverter}}"
+                    BaselineAlignment="Center"
                     FontFamily="{Binding TypedFontFamily}"
                     FontSize="{Binding TypedFontSize}"
                     FontStyle="{Binding TypedFontStyle}"
@@ -55,6 +59,7 @@
                 <Run
                     d:Text="World"
                     Background="{Binding BackColor, Converter={StaticResource Color2BrushConverter}}"
+                    BaselineAlignment="Center"
                     FontFamily="{Binding ToTypeFontFamily}"
                     FontSize="{Binding ToTypeFontSize}"
                     FontStyle="{Binding ToTypeFontStyle}"

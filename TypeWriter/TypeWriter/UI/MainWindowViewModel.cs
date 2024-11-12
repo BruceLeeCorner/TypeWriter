@@ -58,9 +58,6 @@ namespace TypeWriter.UI
             _typedFontStyle = appConfigSource.GetConfig().TypedFont.Style;
             _typedFontWeight = appConfigSource.GetConfig().TypedFont.Weight;
 
-            _typedString = "Hi";
-            _toTypeString = "There";
-
             _sentenceSource.CharTyped += _sentenceSource_CharTyped;
 
             _messenger.Register<string, string>(this, "app_config", (o, m) =>
@@ -235,6 +232,11 @@ namespace TypeWriter.UI
 
         public void TextInput(object sender, TextCompositionEventArgs e)
         {
+            if (e.Text[0] == ' ')
+            {
+                _messenger.Send("hide","hide");
+                return;
+            }
             _sentenceSource.OnInputChar(e.Text[0]);
         }
 

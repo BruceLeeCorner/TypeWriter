@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Win32;
+using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 using System.Windows;
@@ -27,7 +28,13 @@ namespace TypeWriter.UI
             _backColor = _appConfigSource.GetConfig().BackColor;
             _typeBoxHeight = _appConfigSource.GetConfig().TypeBoxHeight;
             _typeBoxWidth = _appConfigSource.GetConfig().TypeBoxWidth;
+            ShowTypeBoxCommand = new DelegateCommand(() =>
+            {
+                _messenger.Send("show_typebox", "show_typebox");
+            });
         }
+
+        public DelegateCommand ShowTypeBoxCommand { get;}
 
         public Color BackColor
         {
@@ -87,7 +94,8 @@ namespace TypeWriter.UI
                 Width = 0,
                 Height = 0,
                 WindowStyle = WindowStyle.None,
-                ShowInTaskbar = false
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
             };
             w.Show();
 
@@ -98,6 +106,7 @@ namespace TypeWriter.UI
                 Multiselect = false,
                 DefaultExt = ".txt"
             };
+            
             if (openFileDialog.ShowDialog() == true)
             {
                 _sentenceSource.LoadText(openFileDialog.FileName);

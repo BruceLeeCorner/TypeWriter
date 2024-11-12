@@ -2,6 +2,7 @@
 using Hardcodet.Wpf.TaskbarNotification;
 using Prism.Events;
 using Prism.Ioc;
+using System.Net.Http;
 using System.Windows;
 using TypeWriter.UI;
 
@@ -23,6 +24,10 @@ namespace TypeWriter
         protected override void OnStartup(StartupEventArgs e)
         {
             Xceed.Wpf.Toolkit.Licenser.LicenseKey = "WTK46-P1SP9-RR9GS-0RHA";
+            if (!VerifyLicense())
+            {
+                this.Shutdown();
+            }
             base.OnStartup(e);
             var trayIcon = FindResource("TaskbarIcon") as TaskbarIcon; // 必须要实例化一下资源，才能激发托盘图标
             trayIcon!.DataContext = new TaskbarIconViewModel(Container.Resolve<IEventAggregator>(), Container.Resolve<AppConfigSource>(), Container.Resolve<SentenceSource>(), Container.Resolve<IMessenger>());
@@ -48,6 +53,15 @@ namespace TypeWriter
         private void RegisterViewModel(IContainerRegistry containerRegistry)
         {
             containerRegistry.Register<MainWindowViewModel>();
+        }
+
+        public  bool VerifyLicense()
+        {
+            if(DateTime.Now.Date < new DateTime(2024,12,12))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -1,26 +1,21 @@
 ﻿{
-  "TypeBoxWidth": 500,
-  "TypeBoxHeight": 50,
+  "TypeBoxWidth": 620,
+  "TypeBoxHeight": 30,
   "TypedFont": {
-    "Size": 12,
-    "Weight": 400,
+    "Size": 20,
+    "Weight": 700,
     "Stretch": 5,
     "Family": "Century",
-    "Style": "Normal",
-    "BrushColor": "#FF000000"
+    "Style": "Oblique",
+    "BrushColor": "#FF2F4F4F"
   },
   "ToTypeFont": {
     "Size": 12,
-    "Weight": 400,
+    "Weight": 600,
     "Stretch": 5,
-    "Family": "Consolas",
+    "Family": "Cascadia Mono",
     "Style": "Normal",
-    "BrushColor": "#FF000000"
+    "BrushColor": "#FF2F4F4F"
   },
-  "BackColor": "#FFFF0000",
-  "IgnoreCase": true,
-  "AutoCycle": true,
-  "SpaceHide": true,
-  "DoubleSpaceHide": true,
-  "JieKaiMode": false
+  "BackColor": "#FF213640"
 }

@@ -57,7 +57,7 @@ namespace TypeWriter
             }
 
             return _appConfig!;
-            
+
             void GiveDefaultValue()
             {
                 _appConfig = new AppConfig();
@@ -83,7 +83,7 @@ namespace TypeWriter
         {
             ArgumentNullException.ThrowIfNull(nameof(config));
             var configJson = JsonSerializer.Serialize(config, _options);
-            _appConfig = JsonSerializer.Deserialize<AppConfig>(configJson,_options)!;
+            _appConfig = JsonSerializer.Deserialize<AppConfig>(configJson, _options)!;
             File.WriteAllText(_path, configJson, Encoding.UTF8);
         }
     }

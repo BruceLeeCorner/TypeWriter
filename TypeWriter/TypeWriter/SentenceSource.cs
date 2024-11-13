@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
 
 namespace TypeWriter
 {
@@ -29,12 +28,12 @@ namespace TypeWriter
         public void LoadText(IEnumerable<string> lines)
         {
             ArgumentNullException.ThrowIfNull(nameof(lines));
-            var lines2 =  lines.Where(item => !string.IsNullOrWhiteSpace(item)).Prepend("Hi There! Stand With Ukraine 2024!");
+            var lines2 = lines.Where(item => !string.IsNullOrWhiteSpace(item)).Prepend("Hi There! Stand With Ukraine 2024!");
             _allWords = new string[lines2.Count()][];
             int i = 0;
             foreach (var item in lines2)
             {
-                _allWords[i] = item.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(item=>item.Trim()).ToArray();
+                _allWords[i] = item.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(item => item.Trim()).ToArray();
                 i++;
             }
             _nextMatchCharIndex = 0;
@@ -54,7 +53,7 @@ namespace TypeWriter
         public void NextSentence()
         {
             _nextMatchLineIndex++;
-            if(_nextMatchLineIndex >= _allWords.Length)
+            if (_nextMatchLineIndex >= _allWords.Length)
             {
                 _nextMatchLineIndex = _allWords.Length;
             }
@@ -112,7 +111,6 @@ namespace TypeWriter
             }
         }
 
-
         public void OnInputChar(char @char)
         {
             if (EOF)
@@ -130,13 +128,13 @@ namespace TypeWriter
                     _nextMatchWordIndex++;
                     _nextMatchCharIndex = 0;
                 }
-                if(EOL)
+                if (EOL)
                 {
                     _nextMatchLineIndex++;
                     _nextMatchWordIndex = 0;
                     _nextMatchCharIndex = 0;
                 }
-                if(EOF)
+                if (EOF)
                 {
                     App.Instance.TrayIcon.ShowBalloonTip("", "End Of File", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
                     Reset();
@@ -144,7 +142,7 @@ namespace TypeWriter
             }
             else
             {
-                App.Instance.TrayIcon.ShowBalloonTip("","捷克,斯洛伐克", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
+                App.Instance.TrayIcon.ShowBalloonTip("", "捷克,斯洛伐克", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
             }
 
             CharTyped?.Invoke((TypedString, ToTypeString));

@@ -1,8 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Hardcodet.Wpf.TaskbarNotification;
+﻿using Hardcodet.Wpf.TaskbarNotification;
 using Prism.Events;
 using Prism.Ioc;
-using System.Net.Http;
 using System.Windows;
 using TypeWriter.UI;
 
@@ -30,7 +28,7 @@ namespace TypeWriter
             }
             base.OnStartup(e);
             var trayIcon = FindResource("TaskbarIcon") as TaskbarIcon; // 必须要实例化一下资源，才能激发托盘图标
-            trayIcon!.DataContext = new TaskbarIconViewModel(Container.Resolve<IEventAggregator>(), Container.Resolve<AppConfigSource>(), Container.Resolve<SentenceSource>(), Container.Resolve<IMessenger>());
+            trayIcon!.DataContext = new TaskbarIconViewModel(Container.Resolve<IEventAggregator>(), Container.Resolve<AppConfigSource>(), Container.Resolve<SentenceSource>());
             var main = new MainWindow();
             this.MainWindow = main;
             main.Show();
@@ -38,8 +36,6 @@ namespace TypeWriter
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<IEventAggregator, EventAggregator>();
-            containerRegistry.RegisterSingleton<IMessenger, WeakReferenceMessenger>();
             RegisterService(containerRegistry);
             RegisterViewModel(containerRegistry);
         }
@@ -55,9 +51,9 @@ namespace TypeWriter
             containerRegistry.Register<MainWindowViewModel>();
         }
 
-        public  bool VerifyLicense()
+        public bool VerifyLicense()
         {
-            if(DateTime.Now.Date < new DateTime(2024,12,12))
+            if (DateTime.Now.Date < new DateTime(2024, 12, 12))
             {
                 return true;
             }

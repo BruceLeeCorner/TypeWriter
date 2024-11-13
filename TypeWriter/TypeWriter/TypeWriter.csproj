@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
     <PackageReference Include="WpfColorFontDialog" Version="1.0.8" />

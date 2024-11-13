@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -14,27 +13,24 @@ namespace TypeWriter.UI
         private readonly AppConfigSource _appConfigSource;
         private readonly IEventAggregator _eventAggregator;
         private readonly SentenceSource _sentenceSource;
-        private readonly IMessenger _messenger;
+        private Color _backColor;
         private int _typeBoxHeight;
         private int _typeBoxWidth;
-        private Color _backColor;
 
-        public TaskbarIconViewModel(IEventAggregator eventAggregator, AppConfigSource appConfigSource, SentenceSource sentenceSource, IMessenger messenger)
+        public TaskbarIconViewModel(IEventAggregator eventAggregator, AppConfigSource appConfigSource, SentenceSource sentenceSource)
         {
             _eventAggregator = eventAggregator;
             _appConfigSource = appConfigSource;
             _sentenceSource = sentenceSource;
-            _messenger = messenger;
+
             _backColor = _appConfigSource.GetConfig().BackColor;
             _typeBoxHeight = _appConfigSource.GetConfig().TypeBoxHeight;
             _typeBoxWidth = _appConfigSource.GetConfig().TypeBoxWidth;
             ShowTypeBoxCommand = new DelegateCommand(() =>
             {
-                _messenger.Send("show_typebox", "show_typebox");
+                _eventAggregator.GetEvent<ShowTypeBoxEvent>().Publish();
             });
         }
-
-        public DelegateCommand ShowTypeBoxCommand { get;}
 
         public Color BackColor
         {
@@ -45,11 +41,12 @@ namespace TypeWriter.UI
                 {
                     _appConfigSource.GetConfig().BackColor = value;
                     _appConfigSource.SaveConfig(_appConfigSource.GetConfig());
-                    _messenger.Send<string, string>("app_config", "app_config");
-                    //_eventAggregator.GetEvent<AppConfigChangedEvent>().Publish();
+                    _eventAggregator.GetEvent<AppConfigChangedEvent>().Publish();
                 }
             }
         }
+
+        public DelegateCommand ShowTypeBoxCommand { get; }
 
         public int TypeBoxHeight
         {
@@ -60,8 +57,7 @@ namespace TypeWriter.UI
                 {
                     _appConfigSource.GetConfig().TypeBoxHeight = value;
                     _appConfigSource.SaveConfig(_appConfigSource.GetConfig());
-                    _messenger.Send<string, string>("app_config", "app_config");
-                    //_eventAggregator.GetEvent<AppConfigChangedEvent>().Publish();
+                    _eventAggregator.GetEvent<AppConfigChangedEvent>().Publish();
                 }
             }
         }
@@ -75,8 +71,7 @@ namespace TypeWriter.UI
                 {
                     _appConfigSource.GetConfig().TypeBoxWidth = value;
                     _appConfigSource.SaveConfig(_appConfigSource.GetConfig());
-                    _messenger.Send<string, string>("app_config", "app_config");
-                    //_eventAggregator.GetEvent<AppConfigChangedEvent>().Publish();
+                    _eventAggregator.GetEvent<AppConfigChangedEvent>().Publish();
                 }
             }
         }
@@ -106,12 +101,11 @@ namespace TypeWriter.UI
                 Multiselect = false,
                 DefaultExt = ".txt"
             };
-            
+
             if (openFileDialog.ShowDialog() == true)
             {
                 _sentenceSource.LoadText(openFileDialog.FileName);
-                _messenger.Send("load_file", "load_file");
-                //_eventAggregator.GetEvent<LoadFileEvent>().Publish();
+                _eventAggregator.GetEvent<NewFileLoadedEvent>().Publish();
             }
 
             w.Close();
@@ -135,8 +129,7 @@ namespace TypeWriter.UI
             {
                 _appConfigSource.GetConfig().ToTypeFont = dialog.Font;
                 _appConfigSource.SaveConfig(_appConfigSource.GetConfig());
-                //_eventAggregator.GetEvent<AppConfigChangedEvent>().Publish();
-                _messenger.Send<string, string>("app_config", "app_config");
+                _eventAggregator.GetEvent<AppConfigChangedEvent>().Publish();
             }
         }
 
@@ -159,8 +152,7 @@ namespace TypeWriter.UI
             {
                 _appConfigSource.GetConfig().TypedFont = dialog.Font;
                 _appConfigSource.SaveConfig(_appConfigSource.GetConfig());
-                //_eventAggregator.GetEvent<AppConfigChangedEvent>().Publish();
-                _messenger.Send<string, string>("app_config", "app_config");
+                _eventAggregator.GetEvent<AppConfigChangedEvent>().Publish();
             }
         }
     }

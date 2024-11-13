@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Prism.Events;
+﻿using Prism.Events;
 using Prism.Mvvm;
 using System.Windows;
 using System.Windows.Input;
@@ -11,7 +10,6 @@ namespace TypeWriter.UI
     {
         private readonly AppConfigSource _appConfigSource;
         private readonly IEventAggregator _eventAggregator;
-        private readonly IMessenger _messenger;
         private readonly SentenceSource _sentenceSource;
         private Color _backColor;
 
@@ -32,90 +30,39 @@ namespace TypeWriter.UI
         private FontWeight _typedFontWeight;
         private string _typedString;
 
-        public MainWindowViewModel(AppConfigSource appConfigSource, SentenceSource sentenceSource, IEventAggregator eventAggregator, IMessenger messenger)
+        public MainWindowViewModel(AppConfigSource appConfigSource, SentenceSource sentenceSource, IEventAggregator eventAggregator)
         {
             _appConfigSource = appConfigSource;
             _sentenceSource = sentenceSource;
             _eventAggregator = eventAggregator;
-            _messenger = messenger;
-
-            _typeBoxHeight = appConfigSource.GetConfig().TypeBoxHeight;
-            _typeBoxWidth = appConfigSource.GetConfig().TypeBoxWidth;
-
-            _backColor = appConfigSource.GetConfig().BackColor;
-
-            _toTypeFontColor = appConfigSource.GetConfig().ToTypeFont.BrushColor.Color;
-            _toTypeFontFamily = appConfigSource.GetConfig().ToTypeFont.Family;
-            _toTypeFontSize = appConfigSource.GetConfig().ToTypeFont.Size;
-            _toTypeFontStretch = appConfigSource.GetConfig().ToTypeFont.Stretch;
-            _toTypeFontStyle = appConfigSource.GetConfig().ToTypeFont.Style;
-            _toTypeFontWeight = appConfigSource.GetConfig().ToTypeFont.Weight;
-
-            _typedColor = appConfigSource.GetConfig().TypedFont.BrushColor.Color;
-            _typedFontFamily = appConfigSource.GetConfig().TypedFont.Family;
-            _typedFontSize = appConfigSource.GetConfig().TypedFont.Size;
-            _typedFontStretch = appConfigSource.GetConfig().TypedFont.Stretch;
-            _typedFontStyle = appConfigSource.GetConfig().TypedFont.Style;
-            _typedFontWeight = appConfigSource.GetConfig().TypedFont.Weight;
-
+            AssignConfig();
             _sentenceSource.CharTyped += _sentenceSource_CharTyped;
-
-            _messenger.Register<string, string>(this, "app_config", (o, m) =>
-            {
-                TypeBoxHeight = appConfigSource.GetConfig().TypeBoxHeight;
-                TypeBoxWidth = appConfigSource.GetConfig().TypeBoxWidth;
-
-                BackColor = appConfigSource.GetConfig().BackColor;
-
-                ToTypeFontColor = appConfigSource.GetConfig().ToTypeFont.BrushColor.Color;
-                ToTypeFontFamily = appConfigSource.GetConfig().ToTypeFont.Family;
-                ToTypeFontSize = appConfigSource.GetConfig().ToTypeFont.Size;
-                ToTypeFontStretch = appConfigSource.GetConfig().ToTypeFont.Stretch;
-                ToTypeFontStyle = appConfigSource.GetConfig().ToTypeFont.Style;
-                ToTypeFontWeight = appConfigSource.GetConfig().ToTypeFont.Weight;
-
-                TypedFontColor = appConfigSource.GetConfig().TypedFont.BrushColor.Color;
-                TypedFontFamily = appConfigSource.GetConfig().TypedFont.Family;
-                TypedFontSize = appConfigSource.GetConfig().TypedFont.Size;
-                TypedFontStretch = appConfigSource.GetConfig().TypedFont.Stretch;
-                TypedFontStyle = appConfigSource.GetConfig().TypedFont.Style;
-                TypedFontWeight = appConfigSource.GetConfig().TypedFont.Weight;
-            });
-
-            _messenger.Register<string, string>(this, "load_file", (o, m) =>
+            _eventAggregator.GetEvent<AppConfigChangedEvent>().Subscribe(AssignConfig);
+            _eventAggregator.GetEvent<NewFileLoadedEvent>().Subscribe(() =>
             {
                 TypedString = string.Empty;
                 ToTypeString = string.Empty;
             });
+        }
 
-            //_eventAggregator.GetEvent<AppConfigChangedEvent>().Subscribe(() =>
-            //{
-            //    TypeBoxHeight = appConfigSource.GetConfig().TypeBoxHeight;
-            //    TypeBoxWidth = appConfigSource.GetConfig().TypeBoxWidth;
+        public void NextSentence()
+        {
+            _sentenceSource.NextSentence();
+        }
 
-            //    BackColor = appConfigSource.GetConfig().BackColor;
+        public void PrevSentence()
+        {
+            _sentenceSource.PrevSentence();
+        }
 
-            //    ToTypeFontColor = appConfigSource.GetConfig().ToTypeFont.BrushColor.Color;
-            //    ToTypeFontFamily = appConfigSource.GetConfig().ToTypeFont.Family;
-            //    ToTypeFontSize = appConfigSource.GetConfig().ToTypeFont.Size;
-            //    ToTypeFontStretch = appConfigSource.GetConfig().ToTypeFont.Stretch;
-            //    ToTypeFontStyle = appConfigSource.GetConfig().ToTypeFont.Style;
-            //    ToTypeFontWeight = appConfigSource.GetConfig().ToTypeFont.Weight;
-
-            //    TypedFontColor = appConfigSource.GetConfig().TypedFont.BrushColor.Color;
-            //    TypedFontFamily = appConfigSource.GetConfig().TypedFont.Family;
-            //    TypedFontSize = appConfigSource.GetConfig().TypedFont.Size;
-            //    TypedFontStretch = appConfigSource.GetConfig().TypedFont.Stretch;
-            //    TypedFontStyle = appConfigSource.GetConfig().TypedFont.Style;
-            //    TypedFontWeight = appConfigSource.GetConfig().TypedFont.Weight;
-            //}, ThreadOption.UIThread);
-
-            //_eventAggregator.GetEvent<LoadFileEvent>().Subscribe(() =>
-            //{
-            //    TypedString = string.Empty;
-            //    ToTypeString = string.Empty;
-            //}, ThreadOption.UIThread);
-
+        public void TextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (e.Text[0] == ' ')
+            {
+                _eventAggregator.GetEvent<HideTypeBox>().Publish();
+                return;
+            }
+            _sentenceSource.OnInputChar(e.Text[0]);
         }
 
         private void _sentenceSource_CharTyped((string typedString, string toTypeString) obj)
@@ -124,6 +71,27 @@ namespace TypeWriter.UI
             ToTypeString = obj.toTypeString;
         }
 
+        private void AssignConfig()
+        {
+            TypeBoxHeight = _appConfigSource.GetConfig().TypeBoxHeight;
+            TypeBoxWidth = _appConfigSource.GetConfig().TypeBoxWidth;
+
+            BackColor = _appConfigSource.GetConfig().BackColor;
+
+            ToTypeFontColor = _appConfigSource.GetConfig().ToTypeFont.BrushColor.Color;
+            ToTypeFontFamily = _appConfigSource.GetConfig().ToTypeFont.Family;
+            ToTypeFontSize = _appConfigSource.GetConfig().ToTypeFont.Size;
+            ToTypeFontStretch = _appConfigSource.GetConfig().ToTypeFont.Stretch;
+            ToTypeFontStyle = _appConfigSource.GetConfig().ToTypeFont.Style;
+            ToTypeFontWeight = _appConfigSource.GetConfig().ToTypeFont.Weight;
+
+            TypedFontColor = _appConfigSource.GetConfig().TypedFont.BrushColor.Color;
+            TypedFontFamily = _appConfigSource.GetConfig().TypedFont.Family;
+            TypedFontSize = _appConfigSource.GetConfig().TypedFont.Size;
+            TypedFontStretch = _appConfigSource.GetConfig().TypedFont.Stretch;
+            TypedFontStyle = _appConfigSource.GetConfig().TypedFont.Style;
+            TypedFontWeight = _appConfigSource.GetConfig().TypedFont.Weight;
+        }
         #region Properties
 
         public Color BackColor
@@ -229,25 +197,5 @@ namespace TypeWriter.UI
         }
 
         #endregion Properties
-
-        public void TextInput(object sender, TextCompositionEventArgs e)
-        {
-            if (e.Text[0] == ' ')
-            {
-                _messenger.Send("hide","hide");
-                return;
-            }
-            _sentenceSource.OnInputChar(e.Text[0]);
-        }
-
-        public void NextSentence()
-        {
-            _sentenceSource.NextSentence();
-        }
-
-        public void PrevSentence()
-        {
-            _sentenceSource.PrevSentence();
-        }
     }
 }

@@ -97,7 +97,8 @@ namespace TypeWriter.UI
             var openFileDialog = new OpenFileDialog
             {
                 Filter = "Text documents (.txt)|*.txt",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos),
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
+                RestoreDirectory = true,
                 Multiselect = false,
                 DefaultExt = ".txt"
             };

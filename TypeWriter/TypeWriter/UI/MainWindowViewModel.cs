@@ -3,6 +3,7 @@ using Prism.Mvvm;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TypeWriter.UI
 {
@@ -42,17 +43,22 @@ namespace TypeWriter.UI
             {
                 TypedString = string.Empty;
                 ToTypeString = string.Empty;
+                _eventAggregator.GetEvent<ShowTypeBoxEvent>().Publish();
             });
         }
 
         public void NextSentence()
         {
-            _sentenceSource.NextSentence();
+           var next = _sentenceSource.NextSentence();
+            ToTypeString = next ?? string.Empty;
+            TypedString = string.Empty;
         }
 
         public void PrevSentence()
         {
-            _sentenceSource.PrevSentence();
+            var prve = _sentenceSource.PrevSentence();
+            ToTypeString = prve ?? string.Empty;
+            TypedString = string.Empty;
         }
 
         public void TextInput(object sender, TextCompositionEventArgs e)

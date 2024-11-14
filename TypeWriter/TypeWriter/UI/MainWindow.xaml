@@ -14,12 +14,12 @@
     prism:ViewModelLocator.AutoWireViewModel="True"
     AllowsTransparency="True"
     BorderThickness="0"
-    WindowStartupLocation="CenterScreen"
     PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     SizeToContent="WidthAndHeight"
     Topmost="True"
+    WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     mc:Ignorable="d">
     <Grid>
@@ -45,6 +45,12 @@
                     <i:EventTrigger EventName="PreviewTextInput">
                         <i:CallMethodAction MethodName="TextInput" TargetObject="{Binding}" />
                     </i:EventTrigger>
+                    <i:KeyTrigger Key="Up">
+                        <i:CallMethodAction MethodName="PrevSentence" TargetObject="{Binding}" />
+                    </i:KeyTrigger>
+                    <i:KeyTrigger Key="Down">
+                        <i:CallMethodAction MethodName="NextSentence" TargetObject="{Binding}" />
+                    </i:KeyTrigger>
                 </i:Interaction.Triggers>
                 <Run
                     d:Text="Hello"

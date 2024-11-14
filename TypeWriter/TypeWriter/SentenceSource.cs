@@ -41,22 +41,32 @@ namespace TypeWriter
             _nextMatchCharIndex = 0;
         }
 
-        public void PrevSentence()
+        public string PrevSentence()
         {
             _nextMatchLineIndex--;
             if (_nextMatchLineIndex < 0)
             {
                 _nextMatchLineIndex = -1;
             }
+            if (_nextMatchLineIndex >=0 && _allWords.Length > 0)
+            {
+                return string.Join(' ', _allWords[_nextMatchLineIndex]);
+            }
+            return null;
         }
 
-        public void NextSentence()
+        public string NextSentence()
         {
             _nextMatchLineIndex++;
             if (_nextMatchLineIndex >= _allWords.Length)
             {
                 _nextMatchLineIndex = _allWords.Length;
             }
+            if (_nextMatchLineIndex < _allWords.Length && _allWords.Length > 0)
+            {
+                return string.Join(' ', _allWords[_nextMatchLineIndex]);
+            }
+            return null;
         }
 
         public bool EOF

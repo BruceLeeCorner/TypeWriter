@@ -15,6 +15,8 @@
   <ItemGroup>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="WpfColorFontDialog" Version="1.0.8" />
     <PackageReference Include="Xceed.Products.Wpf.Toolkit.Full" Version="4.6.24151.1544" />
   </ItemGroup>

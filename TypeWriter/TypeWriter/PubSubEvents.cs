@@ -1,5 +1,4 @@
 ﻿using Prism.Events;
-using Prism.Mvvm;
 
 namespace TypeWriter
 {
@@ -9,15 +8,13 @@ namespace TypeWriter
 
     public class NewFileLoadedEvent : PubSubEvent
     {
-        
     }
 
     public class ShowTypeBoxEvent : PubSubEvent
     {
-
     }
-    public class HideTypeBox : PubSubEvent
-    {
 
+    public class HideTypeBoxEvent : PubSubEvent
+    {
     }
 }

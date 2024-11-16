@@ -48,7 +48,9 @@ namespace TypeWriter
             {
                 _nextMatchLineIndex = -1;
             }
-            if (_nextMatchLineIndex >=0 && _allWords.Length > 0)
+            _nextMatchWordIndex = 0;
+            _nextMatchCharIndex = 0;
+            if (_nextMatchLineIndex >= 0 && _allWords.Length > 0)
             {
                 return string.Join(' ', _allWords[_nextMatchLineIndex]);
             }
@@ -62,6 +64,8 @@ namespace TypeWriter
             {
                 _nextMatchLineIndex = _allWords.Length;
             }
+            _nextMatchWordIndex = 0;
+            _nextMatchCharIndex = 0;
             if (_nextMatchLineIndex < _allWords.Length && _allWords.Length > 0)
             {
                 return string.Join(' ', _allWords[_nextMatchLineIndex]);

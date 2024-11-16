@@ -3,7 +3,6 @@ using Prism.Mvvm;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace TypeWriter.UI
 {
@@ -49,7 +48,7 @@ namespace TypeWriter.UI
 
         public void NextSentence()
         {
-           var next = _sentenceSource.NextSentence();
+            var next = _sentenceSource.NextSentence();
             ToTypeString = next ?? string.Empty;
             TypedString = string.Empty;
         }
@@ -65,10 +64,15 @@ namespace TypeWriter.UI
         {
             if (e.Text[0] == ' ')
             {
-                _eventAggregator.GetEvent<HideTypeBox>().Publish();
+                _eventAggregator.GetEvent<HideTypeBoxEvent>().Publish();
                 return;
             }
             _sentenceSource.OnInputChar(e.Text[0]);
+        }
+
+        public void HideTypeBox()
+        {
+            _eventAggregator.GetEvent<HideTypeBoxEvent>().Publish();
         }
 
         private void _sentenceSource_CharTyped((string typedString, string toTypeString) obj)
@@ -98,6 +102,7 @@ namespace TypeWriter.UI
             TypedFontStyle = _appConfigSource.GetConfig().TypedFont.Style;
             TypedFontWeight = _appConfigSource.GetConfig().TypedFont.Weight;
         }
+
         #region Properties
 
         public Color BackColor

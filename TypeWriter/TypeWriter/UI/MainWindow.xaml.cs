@@ -22,7 +22,7 @@ namespace TypeWriter.UI
                 TextBlock.Focus();
             });
 
-            App.Instance.Container.Resolve<IEventAggregator>().GetEvent<HideTypeBox>().Subscribe(() =>
+            App.Instance.Container.Resolve<IEventAggregator>().GetEvent<HideTypeBoxEvent>().Subscribe(() =>
             {
                 this.Hide();
             });
@@ -38,6 +38,16 @@ namespace TypeWriter.UI
         {
             TextBlock.Focus();
             this.DragMove();
+        }
+
+        private void Self_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            this.Hide();
+        }
+
+        private void TextBlock_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.Hide();
         }
     }
 }

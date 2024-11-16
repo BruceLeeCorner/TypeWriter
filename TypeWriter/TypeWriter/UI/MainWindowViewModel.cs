@@ -65,10 +65,15 @@ namespace TypeWriter.UI
         {
             if (e.Text[0] == ' ')
             {
-                _eventAggregator.GetEvent<HideTypeBox>().Publish();
+                _eventAggregator.GetEvent<HideTypeBoxEvent>().Publish();
                 return;
             }
             _sentenceSource.OnInputChar(e.Text[0]);
+        }
+
+        public void HideTypeBox()
+        {
+            _eventAggregator.GetEvent<HideTypeBoxEvent>().Publish();
         }
 
         private void _sentenceSource_CharTyped((string typedString, string toTypeString) obj)

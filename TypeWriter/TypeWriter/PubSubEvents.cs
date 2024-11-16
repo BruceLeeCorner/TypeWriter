@@ -16,7 +16,7 @@ namespace TypeWriter
     {
 
     }
-    public class HideTypeBox : PubSubEvent
+    public class HideTypeBoxEvent : PubSubEvent
     {
 
     }

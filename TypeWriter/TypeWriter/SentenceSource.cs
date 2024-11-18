@@ -27,7 +27,6 @@ namespace TypeWriter
 
         public void LoadText(IEnumerable<string> lines)
         {
-            ArgumentNullException.ThrowIfNull(nameof(lines));
             var lines2 = lines.Where(item => !string.IsNullOrWhiteSpace(item)).Prepend("Hi There! Stand With Ukraine 2024!");
             _allWords = new string[lines2.Count()][];
             int i = 0;
@@ -98,14 +97,6 @@ namespace TypeWriter
             }
         }
 
-        //public bool SOF
-        //{
-        //    get
-        //    {
-        //        return _allWords == null || _allWords.Length == 0 || (_nextMatchLineIndex == 0 || _nextMatchWordIndex == 0 || _nextMatchCharIndex < 0);
-        //    }
-        //}
-
         public string TypedString
         {
             get
@@ -156,7 +147,7 @@ namespace TypeWriter
             }
             else
             {
-                App.Instance.TrayIcon.ShowBalloonTip("", "捷克,斯洛伐克", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
+                App.Instance.TrayIcon.ShowBalloonTip("", @char.ToString(), Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
             }
 
             CharTyped?.Invoke((TypedString, ToTypeString));

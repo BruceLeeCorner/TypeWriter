@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="EPPlus" Version="7.5.1" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />

@@ -1,4 +1,5 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
+using OfficeOpenXml;
 using Prism.Events;
 using Prism.Ioc;
 using System.Windows;
@@ -22,6 +23,7 @@ namespace TypeWriter
         protected override void OnStartup(StartupEventArgs e)
         {
             Xceed.Wpf.Toolkit.Licenser.LicenseKey = "WTK46-P1SP9-RR9GS-0RHA";
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             if (!VerifyLicense())
             {
                 this.Shutdown();

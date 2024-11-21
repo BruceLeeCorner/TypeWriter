@@ -96,11 +96,11 @@ namespace TypeWriter.UI
 
             var openFileDialog = new OpenFileDialog
             {
-                Filter = "Text documents (.txt)|*.txt",
+                Filter = "Excels|*.xlsx|Text documents|*.txt",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
                 RestoreDirectory = true,
                 Multiselect = false,
-                DefaultExt = ".txt"
+                DefaultExt = ".xlsx"
             };
 
             if (openFileDialog.ShowDialog() == true)

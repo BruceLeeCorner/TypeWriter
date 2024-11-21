@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using OfficeOpenXml;
+using System.Collections;
+using System.IO;
 
 namespace TypeWriter
 {
@@ -18,11 +20,33 @@ namespace TypeWriter
 
         public void LoadText(string path)
         {
-            if (System.IO.Path.GetExtension(path).ToLower() != ".txt")
+            var extension = System.IO.Path.GetExtension(path).ToLower();
+            if (extension != ".txt" && extension != ".xlsx")
             {
                 throw new ArgumentException("The file extension must be .txt");
             }
-            LoadText(File.ReadAllLines(path));
+            if (extension == ".txt")
+            {
+                LoadText(File.ReadAllLines(path));
+            }
+            else if(extension == ".xlsx")
+            {
+                List<string> lines = new List<string>();
+                using ExcelPackage package = new ExcelPackage(path);
+                LoadText(GetFirstColumValues(package.Workbook.Worksheets[0]));
+            }
+
+            IEnumerable<string> GetFirstColumValues(ExcelWorksheet sheet)
+            {
+                for (int i = 1; i <= sheet.Dimension.End.Row; i++)
+                {
+                    string value = sheet.Cells[i, 1].Value as string;
+                    if(value != null)
+                    {
+                        yield return value;
+                    }
+                }
+            }
         }
 
         public void LoadText(IEnumerable<string> lines)

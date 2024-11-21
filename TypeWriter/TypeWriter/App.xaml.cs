@@ -22,6 +22,12 @@ namespace TypeWriter
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            _ = new Mutex(true, "BruceLeeCorner.TypeWriter", out bool success);
+            if (success == false)
+            {
+                this.Shutdown();
+                return;
+            }
             Xceed.Wpf.Toolkit.Licenser.LicenseKey = "WTK46-P1SP9-RR9GS-0RHA";
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             if (!VerifyLicense())

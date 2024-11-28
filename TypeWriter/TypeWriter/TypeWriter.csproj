@@ -6,10 +6,16 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>World Citizen.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Ukraine.ico" />
+    <None Remove="World Citizen.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="World Citizen.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +30,9 @@
   <ItemGroup>
     <Resource Include="Ukraine.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="World Citizen.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 

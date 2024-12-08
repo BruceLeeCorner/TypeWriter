@@ -81,6 +81,60 @@ namespace TypeWriter.UI
             App.Instance.MainWindow!.Close();
         }
 
+        public void LoadAudio()
+        {
+            // 不先New Window Show，文件选择框会闪退。这应该是.NET8 WPF的bug.
+            Window w = new Window
+            {
+                Width = 0,
+                Height = 0,
+                WindowStyle = WindowStyle.None,
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            };
+            w.Show();
+
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Text documents (.mp3)|*.mp3",
+                InitialDirectory = Environment.CurrentDirectory,
+                RestoreDirectory = true,
+                Multiselect = false,
+                DefaultExt = ".mp3"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                _eventAggregator.GetEvent<AudioSelected>().Publish(openFileDialog.FileName);
+            }
+
+            w.Close();
+        }
+
+        public void ChangePlayMode(Object sender, RoutedEventArgs args)
+        {
+            var tag = (args.OriginalSource as FrameworkElement).Tag;
+            if (tag != null)
+            {
+                if (tag.ToString() == "single")
+                {
+                    _eventAggregator.GetEvent<AudioPlayModeChangedEvent>().Publish(AudioPlayMode.SingleLoop);
+                }
+                else if (tag.ToString() == "list")
+                {
+                    _eventAggregator.GetEvent<AudioPlayModeChangedEvent>().Publish(AudioPlayMode.ListLoop);
+                }
+                else if (tag.ToString() == "order")
+                {
+                    _eventAggregator.GetEvent<AudioPlayModeChangedEvent>().Publish(AudioPlayMode.OrderPlay);
+                }
+                else if (tag.ToString() == "random")
+                {
+                    _eventAggregator.GetEvent<AudioPlayModeChangedEvent>().Publish(AudioPlayMode.RandomPlay);
+                }
+            }
+        }
+
         public void LoadFile()
         {
             // 不先New Window Show，文件选择框会闪退。这应该是.NET8 WPF的bug.
@@ -97,7 +151,7 @@ namespace TypeWriter.UI
             var openFileDialog = new OpenFileDialog
             {
                 Filter = "Text documents (.txt)|*.txt",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
+                InitialDirectory = Environment.CurrentDirectory,
                 RestoreDirectory = true,
                 Multiselect = false,
                 DefaultExt = ".txt"

@@ -10,5 +10,6 @@ namespace TypeWriter
         public FontInfo TypedFont { get; set; }
         public FontInfo ToTypeFont { get; set; }
         public Color BackColor { get; set; }
+
     }
 }

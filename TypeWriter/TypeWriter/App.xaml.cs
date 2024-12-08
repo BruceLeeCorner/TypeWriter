@@ -53,7 +53,7 @@ namespace TypeWriter
 
         public bool VerifyLicense()
         {
-            if (DateTime.Now.Date < new DateTime(2024, 12, 12))
+            if (DateTime.Now.Date < new DateTime(2025, 12, 25))
             {
                 return true;
             }

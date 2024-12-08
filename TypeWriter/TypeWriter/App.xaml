@@ -5,7 +5,8 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:tb="http://www.hardcodet.net/taskbar"
-    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    xmlns:xp="clr-namespace:XamlPearls;assembly=XamlPearls">
     <Application.Resources>
         <tb:TaskbarIcon
             x:Key="TaskbarIcon"
@@ -14,7 +15,40 @@
             IconSource="Ukraine.ico">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu Width="180">
-                    <MenuItem Header="Load File">
+                    <MenuItem Header="Load Audio">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:CallMethodAction MethodName="LoadAudio" TargetObject="{Binding}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </MenuItem>
+                    <MenuItem Header="Play Mode">
+                        <StackPanel>
+                            <i:Interaction.Triggers>
+                                <xp:RoutedEventTrigger RoutedEvent="{x:Static RadioButton.ClickEvent}">
+                                    <i:CallMethodAction MethodName="ChangePlayMode" TargetObject="{Binding}" />
+                                </xp:RoutedEventTrigger>
+                            </i:Interaction.Triggers>
+                            <RadioButton
+                                Margin="0,5,0,0"
+                                Content="Order Play"
+                                Tag="order" />
+                            <RadioButton
+                                Margin="0,5,0,0"
+                                Content="Random Play"
+                                Tag="random" />
+                            <RadioButton
+                                Margin="0,5,0,0"
+                                Content="List Loop"
+                                Tag="list" />
+                            <RadioButton
+                                Margin="0,5,0,5"
+                                Content="Single Loop"
+                                IsChecked="True"
+                                Tag="single" />
+                        </StackPanel>
+                    </MenuItem>
+                    <MenuItem Header="Load Text">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Click">
                                 <i:CallMethodAction MethodName="LoadFile" TargetObject="{Binding}" />

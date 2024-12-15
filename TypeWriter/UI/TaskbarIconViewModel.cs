@@ -2,6 +2,7 @@
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using WpfColorFontDialog;
@@ -14,6 +15,7 @@ namespace TypeWriter.UI
         private readonly IEventAggregator _eventAggregator;
         private readonly SentenceSource _sentenceSource;
         private Color _backColor;
+        private string _textFilePath;
         private int _typeBoxHeight;
         private int _typeBoxWidth;
 
@@ -76,41 +78,6 @@ namespace TypeWriter.UI
             }
         }
 
-        public void Exit()
-        {
-            App.Instance.MainWindow!.Close();
-        }
-
-        public void LoadAudio()
-        {
-            // 不先New Window Show，文件选择框会闪退。这应该是.NET8 WPF的bug.
-            Window w = new Window
-            {
-                Width = 0,
-                Height = 0,
-                WindowStyle = WindowStyle.None,
-                ShowInTaskbar = false,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-            };
-            w.Show();
-
-            var openFileDialog = new OpenFileDialog
-            {
-                Filter = "Text documents (.mp3)|*.mp3",
-                InitialDirectory = Environment.CurrentDirectory,
-                RestoreDirectory = true,
-                Multiselect = false,
-                DefaultExt = ".mp3"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                _eventAggregator.GetEvent<AudioSelected>().Publish(openFileDialog.FileName);
-            }
-
-            w.Close();
-        }
-
         public void ChangePlayMode(Object sender, RoutedEventArgs args)
         {
             var tag = (args.OriginalSource as FrameworkElement).Tag;
@@ -135,7 +102,36 @@ namespace TypeWriter.UI
             }
         }
 
-        public void LoadFile()
+        public void Exit()
+        {
+            App.Instance.MainWindow!.Close();
+        }
+
+        public void OpenTextFolder()
+        {
+            Window w = new Window
+            {
+                Width = 0,
+                Height = 0,
+                WindowStyle = WindowStyle.None,
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Background = Brushes.Transparent
+            };
+            w.Show();
+            w.WindowState = WindowState.Minimized;
+            if (!string.IsNullOrWhiteSpace(_textFilePath))
+            {
+                System.Diagnostics.Process.Start("explorer.exe", Path.GetDirectoryName(_textFilePath));
+            }
+            else
+            {
+                MessageBox.Show("You haven't selected the file.", nameof(TypeWriter), MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            w.Close();
+        }
+
+        public void SelectAudio()
         {
             // 不先New Window Show，文件选择框会闪退。这应该是.NET8 WPF的bug.
             Window w = new Window
@@ -150,6 +146,37 @@ namespace TypeWriter.UI
 
             var openFileDialog = new OpenFileDialog
             {
+                Filter = "Audio|*.mp3",
+                InitialDirectory = Environment.CurrentDirectory,
+                RestoreDirectory = true,
+                Multiselect = false,
+                DefaultExt = ".mp3"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                _eventAggregator.GetEvent<AudioSelected>().Publish(openFileDialog.FileName);
+            }
+
+            w.Close();
+        }
+
+        public void SelectFile()
+        {
+            // 不先New Window Show，文件选择框会闪退。这应该是.NET8 WPF的bug.
+            Window w = new Window
+            {
+                Width = 0,
+                Height = 0,
+                WindowStyle = WindowStyle.None,
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Background = Brushes.Transparent
+            };
+            w.Show();
+
+            var openFileDialog = new OpenFileDialog
+            {
                 Filter = "Text documents (.txt)|*.txt",
                 InitialDirectory = Environment.CurrentDirectory,
                 RestoreDirectory = true,
@@ -159,7 +186,8 @@ namespace TypeWriter.UI
 
             if (openFileDialog.ShowDialog() == true)
             {
-                _sentenceSource.LoadText(openFileDialog.FileName);
+                _textFilePath = openFileDialog.FileName;
+                _sentenceSource.LoadText(_textFilePath);
                 _eventAggregator.GetEvent<NewFileLoadedEvent>().Publish();
             }
 

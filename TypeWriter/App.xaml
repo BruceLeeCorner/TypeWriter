@@ -15,10 +15,10 @@
             IconSource="precious.ico">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu Width="180">
-                    <MenuItem Header="Load Audio">
+                    <MenuItem Header="Select Audio">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Click">
-                                <i:CallMethodAction MethodName="LoadAudio" TargetObject="{Binding}" />
+                                <i:CallMethodAction MethodName="SelectAudio" TargetObject="{Binding}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </MenuItem>
@@ -48,10 +48,17 @@
                                 Tag="single" />
                         </StackPanel>
                     </MenuItem>
-                    <MenuItem Header="Load Text">
+                    <MenuItem Header="Select Text">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Click">
-                                <i:CallMethodAction MethodName="LoadFile" TargetObject="{Binding}" />
+                                <i:CallMethodAction MethodName="SelectFile" TargetObject="{Binding}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </MenuItem>
+                    <MenuItem Header="Open Text Folder">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:CallMethodAction MethodName="OpenTextFolder" TargetObject="{Binding}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </MenuItem>

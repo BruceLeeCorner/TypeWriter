@@ -1,0 +1,21 @@
+﻿{
+  "TypeBoxWidth": 620,
+  "TypeBoxHeight": 30,
+  "TypedFont": {
+    "Size": 20,
+    "Weight": 700,
+    "Stretch": 5,
+    "Family": "Century",
+    "Style": "Oblique",
+    "BrushColor": "#FF2F4F4F"
+  },
+  "ToTypeFont": {
+    "Size": 12,
+    "Weight": 600,
+    "Stretch": 5,
+    "Family": "Cascadia Mono",
+    "Style": "Normal",
+    "BrushColor": "#FF2F4F4F"
+  },
+  "BackColor": "#FF213640"
+}

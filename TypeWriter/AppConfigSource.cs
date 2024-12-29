@@ -8,10 +8,10 @@ namespace TypeWriter
 {
     internal class AppConfigSource
     {
-        private readonly string _path;
-        private AppConfig _appConfig = null!;
         private readonly JsonSerializerOptions _options;
+        private readonly string _path;
         private readonly object _syncObj;
+        private AppConfig _appConfig = null!;
 
         public AppConfigSource()
         {
@@ -68,14 +68,30 @@ namespace TypeWriter
                 _appConfig.ToTypeFont.Weight = FontWeights.Regular;
                 _appConfig.ToTypeFont.Style = FontStyles.Normal;
                 _appConfig.ToTypeFont.Family = new FontFamily("Consolas");
+                _appConfig.ToTypeFont.Size = 20;
                 _appConfig.TypedFont = new WpfColorFontDialog.FontInfo();
                 _appConfig.TypedFont.BrushColor = new SolidColorBrush(Colors.Black);
                 _appConfig.TypedFont.Stretch = FontStretches.Normal;
                 _appConfig.TypedFont.Weight = FontWeights.Regular;
                 _appConfig.TypedFont.Style = FontStyles.Normal;
                 _appConfig.TypedFont.Family = new FontFamily("Consolas");
-                _appConfig.TypeBoxWidth = 500;
-                _appConfig.TypeBoxHeight = 30;
+                _appConfig.TypedFont.Size = 20;
+                _appConfig.TypeBoxWidth = 1000;
+                _appConfig.TypeBoxHeight = 40;
+                _appConfig.LearnWordOption = new LearnWordOption()
+                {
+                    BackColor = Colors.Orange,
+                    BoxHeight = 40,
+                    BoxWidth = 1000,
+                    Accent = Accent.US,
+                    FontInfo = new WpfColorFontDialog.FontInfo(),
+                };
+                _appConfig.LearnWordOption.FontInfo.BrushColor = new SolidColorBrush(Colors.Black);
+                _appConfig.LearnWordOption.FontInfo.Stretch = FontStretches.Normal;
+                _appConfig.LearnWordOption.FontInfo.Weight = FontWeights.Regular;
+                _appConfig.LearnWordOption.FontInfo.Family = new FontFamily("Consolas");
+                _appConfig.LearnWordOption.FontInfo.Style = FontStyles.Normal;
+                _appConfig.LearnWordOption.FontInfo.Size = 20;
             }
         }
 

@@ -17,5 +17,18 @@
     "Style": "Normal",
     "BrushColor": "#FF2F4F4F"
   },
-  "BackColor": "#FF213640"
+  "BackColor": "#FF213640",
+  "LearnWordOption": {
+    "BackColor": "#FFFFFFFF",
+    "BoxHeight": 40,
+    "BoxWidth": 1200,
+    "FontInfo": {
+      "Size": 12,
+      "Weight": 600,
+      "Stretch": 5,
+      "Family": "Cascadia Mono",
+      "Style": "Normal",
+      "BrushColor": "#FF2F4F4F"
+    }
+  }
 }

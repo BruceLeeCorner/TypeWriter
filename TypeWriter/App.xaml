@@ -3,11 +3,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:TypeWriter"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:tb="http://www.hardcodet.net/taskbar"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     xmlns:xp="clr-namespace:XamlPearls;assembly=XamlPearls">
     <Application.Resources>
+
+        <local:Accent2BoolConverter x:Key="Accent2BoolConverter" />
         <tb:TaskbarIcon
             x:Key="TaskbarIcon"
             Name="Self"
@@ -15,101 +18,187 @@
             IconSource="precious.ico">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu Width="180">
-                    <MenuItem Header="Select Audio">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <i:CallMethodAction MethodName="SelectAudio" TargetObject="{Binding}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </MenuItem>
-                    <MenuItem Header="Play Mode">
-                        <StackPanel>
+                    <!--#region Learn Word-->
+                    <MenuItem Header="Learn Word">
+                        <MenuItem Header="Show">
                             <i:Interaction.Triggers>
-                                <xp:RoutedEventTrigger RoutedEvent="{x:Static RadioButton.ClickEvent}">
-                                    <i:CallMethodAction MethodName="ChangePlayMode" TargetObject="{Binding}" />
-                                </xp:RoutedEventTrigger>
+                                <i:EventTrigger EventName="Click">
+                                    <i:CallMethodAction MethodName="ShowWordBox" TargetObject="{Binding}" />
+                                </i:EventTrigger>
                             </i:Interaction.Triggers>
-                            <RadioButton
-                                Margin="0,5,0,0"
-                                Content="Order Play"
-                                Tag="order" />
-                            <RadioButton
-                                Margin="0,5,0,0"
-                                Content="Random Play"
-                                Tag="random" />
-                            <RadioButton
-                                Margin="0,5,0,0"
-                                Content="List Loop"
-                                Tag="list" />
-                            <RadioButton
-                                Margin="0,5,0,5"
-                                Content="Single Loop"
-                                IsChecked="True"
-                                Tag="single" />
-                        </StackPanel>
-                    </MenuItem>
-                    <MenuItem Header="Select Text">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <i:CallMethodAction MethodName="SelectFile" TargetObject="{Binding}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </MenuItem>
-                    <MenuItem Header="Open Text Folder">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <i:CallMethodAction MethodName="OpenTextFolder" TargetObject="{Binding}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </MenuItem>
-                    <MenuItem>
-                        <MenuItem.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock
-                                    MinWidth="50"
-                                    Margin="0,0,3,0"
-                                    VerticalAlignment="Center"
-                                    Text="Width" />
-                                <xctk:UIntegerUpDown MinWidth="60" Value="{Binding TypeBoxWidth}" />
+                        </MenuItem>
+
+                        <MenuItem Header="Select Words">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <i:CallMethodAction MethodName="SelectWordFile" TargetObject="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </MenuItem>
+
+                        <MenuItem Header="Font">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <i:CallMethodAction MethodName="SetLearnWordFont" TargetObject="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </MenuItem>
+                        <MenuItem>
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        Margin="0,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Text="BackColor" />
+                                    <xctk:ColorPicker Width="60" SelectedColor="{Binding ObservableLearnWordOption.BackColor}" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem>
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="0,0,3,0"
+                                        VerticalAlignment="Center"
+                                        Text="Width" />
+                                    <xctk:UIntegerUpDown MinWidth="60" Value="{Binding ObservableLearnWordOption.BoxWidth}" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem>
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="0,0,3,0"
+                                        VerticalAlignment="Center"
+                                        Text="Height" />
+                                    <xctk:UIntegerUpDown MinWidth="60" Value="{Binding ObservableLearnWordOption.BoxHeight}" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+
+                        <MenuItem Header="Accent">
+                            <StackPanel>
+                                <i:Interaction.Triggers>
+                                    <xp:RoutedEventTrigger RoutedEvent="{x:Static RadioButton.ClickEvent}">
+                                        <i:CallMethodAction MethodName="ChangeAccent" TargetObject="{Binding}" />
+                                    </xp:RoutedEventTrigger>
+                                </i:Interaction.Triggers>
+                                <RadioButton
+                                    Margin="0,5,0,0"
+                                    Content="US"
+                                    IsChecked="{Binding ObservableLearnWordOption.Accent, Mode=OneWay, Converter={StaticResource Accent2BoolConverter}, ConverterParameter={x:Static local:Accent.US}}"
+                                    Tag="US" />
+                                <RadioButton
+                                    Margin="0,5,0,0"
+                                    Content="UK"
+                                    IsChecked="{Binding ObservableLearnWordOption.Accent, Mode=OneWay, Converter={StaticResource Accent2BoolConverter}, ConverterParameter={x:Static local:Accent.UK}}"
+                                    Tag="UK" />
                             </StackPanel>
-                        </MenuItem.Header>
+                        </MenuItem>
                     </MenuItem>
-                    <MenuItem>
-                        <MenuItem.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock
-                                    MinWidth="50"
-                                    Margin="0,0,3,0"
-                                    VerticalAlignment="Center"
-                                    Text="Height" />
-                                <xctk:UIntegerUpDown MinWidth="60" Value="{Binding TypeBoxHeight}" />
+                    <!--#endregion-->
+                    <MenuItem Header="Player">
+                        <MenuItem Header="Select Audio">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <i:CallMethodAction MethodName="SelectAudio" TargetObject="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </MenuItem>
+                        <MenuItem Header="Play Mode">
+                            <StackPanel>
+                                <i:Interaction.Triggers>
+                                    <xp:RoutedEventTrigger RoutedEvent="{x:Static RadioButton.ClickEvent}">
+                                        <i:CallMethodAction MethodName="ChangePlayMode" TargetObject="{Binding}" />
+                                    </xp:RoutedEventTrigger>
+                                </i:Interaction.Triggers>
+                                <RadioButton
+                                    Margin="0,5,0,0"
+                                    Content="Order Play"
+                                    Tag="order" />
+                                <RadioButton
+                                    Margin="0,5,0,0"
+                                    Content="Random Play"
+                                    Tag="random" />
+                                <RadioButton
+                                    Margin="0,5,0,0"
+                                    Content="List Loop"
+                                    Tag="list" />
+                                <RadioButton
+                                    Margin="0,5,0,5"
+                                    Content="Single Loop"
+                                    IsChecked="True"
+                                    Tag="single" />
                             </StackPanel>
-                        </MenuItem.Header>
+                        </MenuItem>
                     </MenuItem>
-                    <MenuItem Header="Typed Font">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <i:CallMethodAction MethodName="SetTypedFont" TargetObject="{Binding}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </MenuItem>
-                    <MenuItem Header="ToType Font">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <i:CallMethodAction MethodName="SetToTypeFont" TargetObject="{Binding}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </MenuItem>
-                    <MenuItem>
-                        <MenuItem.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock
-                                    Margin="0,0,10,0"
-                                    VerticalAlignment="Center"
-                                    Text="BackColor" />
-                                <xctk:ColorPicker Width="60" SelectedColor="{Binding BackColor}" />
-                            </StackPanel>
-                        </MenuItem.Header>
+                    <MenuItem Header="Typer">
+                        <MenuItem Header="Select Text">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <i:CallMethodAction MethodName="SelectFile" TargetObject="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </MenuItem>
+                        <MenuItem Header="Open Folder">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <i:CallMethodAction MethodName="OpenTextFolder" TargetObject="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </MenuItem>
+                        <MenuItem>
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="0,0,3,0"
+                                        VerticalAlignment="Center"
+                                        Text="Width" />
+                                    <xctk:UIntegerUpDown MinWidth="60" Value="{Binding TypeBoxWidth}" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem>
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="0,0,3,0"
+                                        VerticalAlignment="Center"
+                                        Text="Height" />
+                                    <xctk:UIntegerUpDown MinWidth="60" Value="{Binding TypeBoxHeight}" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Header="Typed Font">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <i:CallMethodAction MethodName="SetTypedFont" TargetObject="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </MenuItem>
+                        <MenuItem Header="ToType Font">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <i:CallMethodAction MethodName="SetToTypeFont" TargetObject="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </MenuItem>
+                        <MenuItem>
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        Margin="0,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Text="BackColor" />
+                                    <xctk:ColorPicker Width="60" SelectedColor="{Binding BackColor}" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
                     </MenuItem>
                     <MenuItem Header="Exit">
                         <i:Interaction.Triggers>

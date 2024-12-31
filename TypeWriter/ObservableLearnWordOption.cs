@@ -5,12 +5,22 @@ namespace TypeWriter
 {
     internal class ObservableLearnWordOption : BindableBase
     {
+        #region Fields
+
         private readonly LearnWordOption learnWordOption;
+
+        #endregion Fields
+
+        #region Public Constructors
 
         public ObservableLearnWordOption()
         {
             learnWordOption = new LearnWordOption();
         }
+
+        #endregion Public Constructors
+
+        #region Properties
 
         public Accent Accent
         {
@@ -76,5 +86,7 @@ namespace TypeWriter
                 RaisePropertyChanged();
             }
         }
+
+        #endregion Properties
     }
 }

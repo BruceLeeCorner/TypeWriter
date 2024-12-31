@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace TypeWriter
 {
@@ -19,21 +8,33 @@ namespace TypeWriter
     /// </summary>
     public partial class Window1 : Window, IDialogWindow
     {
+        #region Public Constructors
+
         public Window1()
         {
             InitializeComponent();
         }
 
+        #endregion Public Constructors
+
+        #region Properties
+
         public IDialogResult Result { get; set; }
+
+        #endregion Properties
+
+        #region Private Methods
+
+        private void Window_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            this.Hide();
+        }
 
         private void Window_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
         }
 
-        private void Window_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            this.Hide();
-        }
+        #endregion Private Methods
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using NAudio.Wave;
 using Nito.AsyncEx;
+using NLog;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
@@ -13,6 +14,8 @@ namespace TypeWriter.UserInterface
 {
     internal class LearnWordViewModel : BindableBase, IDialogAware
     {
+        #region Fields
+
         private readonly AppConfigSource _appConfigSource;
         private readonly IEventAggregator _eventAggregator;
         private readonly AsyncLock _mutex = new AsyncLock();
@@ -30,26 +33,33 @@ namespace TypeWriter.UserInterface
         private FontStretch _fontStretch;
         private FontStyle _fontStyle;
         private FontWeight _fontWeight;
+        private Logger _logger = LogManager.GetCurrentClassLogger();
         private string _word;
+
+        #endregion Fields
 
         #region Commands
 
         public DelegateCommand<KeyEventArgs> KeyDownCommand { get; set; }
-        public AsyncDelegateCommand NextCommand { get; set; }
-        public AsyncDelegateCommand PrevCommand { get; set; }
+        public DelegateCommand NextCommand { get; set; }
+        public DelegateCommand PrevCommand { get; set; }
 
         #endregion Commands
 
+        #region Public Constructors
+
         public LearnWordViewModel(WordSource wordSource, AppConfigSource appConfigSource, IEventAggregator eventAggregator)
         {
-            NextCommand = new AsyncDelegateCommand(Next).Catch((ex) => { });
-            PrevCommand = new AsyncDelegateCommand(Previous).Catch((ex) => { });
-            KeyDownCommand = new DelegateCommand<KeyEventArgs>(KeyDown);
+            NextCommand = new DelegateCommand(Next).Catch((ex) => { _logger.Error(ex); });
+            PrevCommand = new DelegateCommand(Previous).Catch((ex) => { _logger.Error(ex); });
+            KeyDownCommand = new DelegateCommand<KeyEventArgs>(KeyDown).Catch((ex) => { _logger.Error(ex); });
+
             _wordSource = wordSource;
             _phonetics = new Dictionary<string, string>();
             _wordAudioCache = new Dictionary<string, (byte[] us, byte[] uk)>();
             _appConfigSource = appConfigSource;
             _eventAggregator = eventAggregator;
+
             _backColor = _appConfigSource.GetConfig().LearnWordOption.BackColor;
             _boxHeight = _appConfigSource.GetConfig().LearnWordOption.BoxHeight;
             _boxWidth = _appConfigSource.GetConfig().LearnWordOption.BoxWidth;
@@ -75,17 +85,33 @@ namespace TypeWriter.UserInterface
                 Accent = _appConfigSource.GetConfig().LearnWordOption.Accent;
             });
 
-            LoadPhonetic();
+            ReadPhonetic();
 
-            _timer = new Timer((state) =>
+            _timer = new Timer(async (state) =>
             {
-                PlayWordAudio(Word).GetAwaiter().GetResult();
+                try
+                {
+                    await PlayWordAudio(Word);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex);
+                }
+
                 _timer.Change(TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan);
             });
-            _timer.Change(TimeSpan.FromSeconds(0), Timeout.InfiniteTimeSpan);
+            _timer.Change(TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan);
         }
 
+        #endregion Public Constructors
+
+        #region Events
+
         public event Action<IDialogResult> RequestClose;
+
+        #endregion Events
+
+        #region Properties
 
         public Accent Accent
         {
@@ -172,9 +198,13 @@ namespace TypeWriter.UserInterface
             set { SetProperty(ref _word, value); }
         }
 
+        #endregion Properties
+
+        #region Public Methods
+
         public bool CanCloseDialog()
         {
-            return true;
+            return false;
         }
 
         public void OnDialogClosed()
@@ -185,42 +215,101 @@ namespace TypeWriter.UserInterface
         {
         }
 
+        #endregion Public Methods
+
+        #region Private Methods
+
         private void KeyDown(KeyEventArgs args)
         {
-            TextBox textBox = args.Source as TextBox;
-            textBox.Focus();
-            if (args.Key == Key.Enter)
+            if (args != null)
             {
-                textBox.Clear();
-            }
-            else if (args.Key == Key.Up)
-            {
-                _ = Previous();
-            }
-            else if (args.Key == Key.Down)
-            {
-                _ = Next();
-            }
-            else if (args.Key == Key.Left)
-            {
-                Accent = Accent.US;
-            }
-            else if (args.Key == Key.Right)
-            {
-                Accent = Accent.UK;
-            }
-            else if(args.Key == Key.Space)
-            {
-                var parent = LogicalTreeHelper.GetParent(textBox);
-                while (parent is not Window)
+                TextBox textBox = args.Source as TextBox;
+
+                if (args.Key == Key.Space)
                 {
-                    parent = LogicalTreeHelper.GetParent(parent);
+                    var parent = LogicalTreeHelper.GetParent(textBox);
+                    while (parent is not Window)
+                    {
+                        parent = LogicalTreeHelper.GetParent(parent);
+                    }
+                    (parent as Window)?.Hide();
+                    return;
                 }
-                (parent as Window).Hide();
+
+                if (args.Key == Key.Enter)
+                {
+                    textBox.Clear();
+                }
+                else if (args.Key == Key.Up)
+                {
+                    Previous();
+                    textBox.Clear();
+                }
+                else if (args.Key == Key.Down)
+                {
+                    Next();
+                    textBox.Clear();
+                }
+                else if (args.Key == Key.Left)
+                {
+                    Accent = Accent.US;
+                }
+                else if (args.Key == Key.Right)
+                {
+                    Accent = Accent.UK;
+                }
+                textBox.Focus();
             }
         }
 
-        private void LoadPhonetic()
+        private void Next()
+        {
+            _wordSource.Next();
+            Word = _wordSource.Word;
+            RaisePropertyChanged(nameof(Phonetic));
+        }
+
+        private async Task PlayWordAudio(string word)
+        {
+            if (string.IsNullOrWhiteSpace(word))
+            {
+                return;
+            }
+
+            using (await _mutex.LockAsync())
+            {
+                byte[] audioBytes;
+                if (!_wordAudioCache.ContainsKey(word))
+                {
+                    using HttpClient client = new HttpClient();
+                    client.Timeout = TimeSpan.FromSeconds(3);
+                    var ukAudio = await client.GetByteArrayAsync($"https://dict.youdao.com/dictvoice?audio={word}&type=1");
+                    var usAudio = await client.GetByteArrayAsync($"https://dict.youdao.com/dictvoice?audio={word}&type=2");
+                    _wordAudioCache[word] = (usAudio, ukAudio);
+                }
+                audioBytes = Accent == Accent.US ? _wordAudioCache[word].us : _wordAudioCache[word].uk;
+                using (var ms = new MemoryStream(audioBytes))
+                using (var media = new StreamMediaFoundationReader(ms))
+                using (var waveOut = new WaveOutEvent())
+                {
+                    waveOut.Init(media);
+                    waveOut.Play();
+                    while (waveOut.PlaybackState == PlaybackState.Playing)
+                    {
+                        await Task.Delay(100);
+                    }
+                }
+            }
+        }
+
+        private void Previous()
+        {
+            _wordSource.Previous();
+            Word = _wordSource.Word;
+            RaisePropertyChanged(nameof(Phonetic));
+        }
+
+        private void ReadPhonetic()
         {
             _phonetics.Clear();
             using var reader = new StreamReader("word.csv");
@@ -237,67 +326,6 @@ namespace TypeWriter.UserInterface
             }
         }
 
-        private async Task Next()
-        {
-            _wordSource.Next();
-            Word = _wordSource.Word;
-            RaisePropertyChanged(nameof(Phonetic));
-            await PlayWordAudio(Word);
-        }
-
-        private async Task PlayWordAudio(string word)
-        {
-            if (string.IsNullOrWhiteSpace(word))
-            {
-                return;
-            }
-
-            using (await _mutex.LockAsync())
-            {
-                byte[] audioBytes;
-                var accent = _accent;
-                if (_wordAudioCache.ContainsKey(word))
-                {
-                    if (accent == Accent.UK)
-                    {
-                        audioBytes = _wordAudioCache[word].uk;
-                    }
-                    else
-                    {
-                        audioBytes = _wordAudioCache[word].us;
-                    }
-                }
-                else
-                {
-                    using HttpClient client = new HttpClient();
-                    client.Timeout = TimeSpan.FromSeconds(1);
-                    var ukAudio = await client.GetByteArrayAsync($"https://dict.youdao.com/dictvoice?audio={word}&type={1}");
-                    var usAudio = await client.GetByteArrayAsync($"https://dict.youdao.com/dictvoice?audio={word}&type={2}");
-                    _wordAudioCache[word] = (usAudio, ukAudio);
-                    audioBytes = accent == Accent.UK ? ukAudio : usAudio;
-                }
-
-                using (var ms = new MemoryStream(audioBytes))
-                using (var media = new StreamMediaFoundationReader(ms))
-                using (var waveOut = new WaveOutEvent())
-                {
-                    waveOut.Init(media);
-                    waveOut.Play();
-                    while (waveOut.PlaybackState == PlaybackState.Playing)
-                    {
-                        await Task.Delay(100);
-                    }
-                }
-            }
-        }
-
-        private async Task Previous()
-        {
-            _wordSource.Previous();
-            Word = _wordSource.Word;
-            RaisePropertyChanged(nameof(Phonetic));
-
-            await PlayWordAudio(Word);
-        }
+        #endregion Private Methods
     }
 }

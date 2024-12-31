@@ -4,13 +4,23 @@ namespace TypeWriter
 {
     internal class WordSource
     {
+        #region Fields
+
         private int _index;
         private List<string> _words;
+
+        #endregion Fields
+
+        #region Public Constructors
 
         public WordSource()
         {
             _words = new List<string>();
         }
+
+        #endregion Public Constructors
+
+        #region Properties
 
         public string Word
         {
@@ -23,6 +33,10 @@ namespace TypeWriter
                 return _words[_index];
             }
         }
+
+        #endregion Properties
+
+        #region Public Methods
 
         public void LoadWords(IEnumerable<string> words)
         {
@@ -72,5 +86,7 @@ namespace TypeWriter
                 _index--;
             }
         }
+
+        #endregion Public Methods
     }
 }

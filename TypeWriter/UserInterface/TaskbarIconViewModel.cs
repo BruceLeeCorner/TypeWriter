@@ -8,6 +8,8 @@ namespace TypeWriter.UserInterface
 {
     internal class TaskbarIconViewModel : BindableBase
     {
+        #region Fields
+
         private readonly AppConfigSource _appConfigSource;
         private readonly IDialogService _dialogService;
         private readonly IEventAggregator _eventAggregator;
@@ -17,6 +19,10 @@ namespace TypeWriter.UserInterface
         private string _textFilePath;
         private int _typeBoxHeight;
         private int _typeBoxWidth;
+
+        #endregion Fields
+
+        #region Public Constructors
 
         public TaskbarIconViewModel(IEventAggregator eventAggregator, IDialogService dialogService, AppConfigSource appConfigSource, SentenceSource sentenceSource, WordSource wordSource)
         {
@@ -31,11 +37,11 @@ namespace TypeWriter.UserInterface
 
             ObservableLearnWordOption = new ObservableLearnWordOption()
             {
-                BoxWidth = appConfigSource.GetConfig().LearnWordOption.BoxWidth,
-                BoxHeight = appConfigSource.GetConfig().LearnWordOption.BoxHeight,
-                BackColor = appConfigSource.GetConfig().LearnWordOption.BackColor,
-                FontInfo = appConfigSource.GetConfig().LearnWordOption.FontInfo,
-                Accent = appConfigSource.GetConfig().LearnWordOption.Accent,
+                BoxWidth = _appConfigSource.GetConfig().LearnWordOption.BoxWidth,
+                BoxHeight = _appConfigSource.GetConfig().LearnWordOption.BoxHeight,
+                BackColor = _appConfigSource.GetConfig().LearnWordOption.BackColor,
+                FontInfo = _appConfigSource.GetConfig().LearnWordOption.FontInfo,
+                Accent = _appConfigSource.GetConfig().LearnWordOption.Accent,
             };
 
             ObservableLearnWordOption.PropertyChanged += (s, e) =>
@@ -46,19 +52,19 @@ namespace TypeWriter.UserInterface
                 {
                     _appConfigSource.GetConfig().LearnWordOption.BoxWidth = (int)typeof(ObservableLearnWordOption).GetProperty(e.PropertyName).GetValue(s1);
                 }
-                if (e.PropertyName == nameof(ObservableLearnWordOption.BoxHeight))
+                else if (e.PropertyName == nameof(ObservableLearnWordOption.BoxHeight))
                 {
                     _appConfigSource.GetConfig().LearnWordOption.BoxHeight = (int)typeof(ObservableLearnWordOption).GetProperty(e.PropertyName).GetValue(s1);
                 }
-                if (e.PropertyName == nameof(ObservableLearnWordOption.BackColor))
+                else if (e.PropertyName == nameof(ObservableLearnWordOption.BackColor))
                 {
                     _appConfigSource.GetConfig().LearnWordOption.BackColor = (Color)typeof(ObservableLearnWordOption).GetProperty(e.PropertyName).GetValue(s1);
                 }
-                if (e.PropertyName == nameof(ObservableLearnWordOption.FontInfo))
-                {
-                    _appConfigSource.GetConfig().LearnWordOption.FontInfo = (FontInfo)typeof(ObservableLearnWordOption).GetProperty(e.PropertyName).GetValue(s1);
-                }
-                if (e.PropertyName == nameof(ObservableLearnWordOption.Accent))
+                //else if (e.PropertyName == nameof(ObservableLearnWordOption.FontInfo))
+                //{
+                //    _appConfigSource.GetConfig().LearnWordOption.FontInfo = (FontInfo)typeof(ObservableLearnWordOption).GetProperty(e.PropertyName).GetValue(s1);
+                //}
+                else if (e.PropertyName == nameof(ObservableLearnWordOption.Accent))
                 {
                     _appConfigSource.GetConfig().LearnWordOption.Accent = (Accent)typeof(ObservableLearnWordOption).GetProperty(e.PropertyName).GetValue(s1);
                 }
@@ -71,6 +77,10 @@ namespace TypeWriter.UserInterface
                 _eventAggregator.GetEvent<ShowTypeBoxEvent>().Publish();
             });
         }
+
+        #endregion Public Constructors
+
+        #region Properties
 
         public Color BackColor
         {
@@ -116,6 +126,10 @@ namespace TypeWriter.UserInterface
                 }
             }
         }
+
+        #endregion Properties
+
+        #region Public Methods
 
         public void ChangeAccent(object sender, RoutedEventArgs args)
         {
@@ -238,11 +252,11 @@ namespace TypeWriter.UserInterface
 
             var openFileDialog = new OpenFileDialog
             {
-                Filter = "Text documents (.txt)|*.txt",
+                Filter = "word documents (.word)|*.word",
                 InitialDirectory = Environment.CurrentDirectory,
                 RestoreDirectory = true,
                 Multiselect = false,
-                DefaultExt = ".txt"
+                DefaultExt = ".word"
             };
 
             if (openFileDialog.ShowDialog() == true)
@@ -251,6 +265,28 @@ namespace TypeWriter.UserInterface
             }
 
             w.Close();
+        }
+
+        public void SetLearnWordFont()
+        {
+            ColorFontDialog dialog = new ColorFontDialog();
+            dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            // need that mainwindow has been shown.
+            //dialog.Font = FontInfo.GetControlFont(Application.Current.MainWindow);
+            dialog.Font = new FontInfo();
+            dialog.Font.BrushColor = _appConfigSource.GetConfig().ToTypeFont.BrushColor;
+            dialog.Font.Family = _appConfigSource.GetConfig().ToTypeFont.Family;
+            dialog.Font.Weight = _appConfigSource.GetConfig().ToTypeFont.Weight;
+            dialog.Font.Style = _appConfigSource.GetConfig().ToTypeFont.Style;
+            dialog.Font.Stretch = _appConfigSource.GetConfig().ToTypeFont.Stretch;
+            dialog.Font.Size = _appConfigSource.GetConfig().ToTypeFont.Size;
+
+            if (dialog.ShowDialog() == true)
+            {
+                _appConfigSource.GetConfig().LearnWordOption.FontInfo = dialog.Font;
+                _appConfigSource.SaveConfig(_appConfigSource.GetConfig());
+                _eventAggregator.GetEvent<AppConfigChangedEvent>().Publish();
+            }
         }
 
         public void SetToTypeFont()
@@ -270,28 +306,6 @@ namespace TypeWriter.UserInterface
             if (dialog.ShowDialog() == true)
             {
                 _appConfigSource.GetConfig().ToTypeFont = dialog.Font;
-                _appConfigSource.SaveConfig(_appConfigSource.GetConfig());
-                _eventAggregator.GetEvent<AppConfigChangedEvent>().Publish();
-            }
-        }
-
-        public void SetLearnWordFont()
-        {
-            ColorFontDialog dialog = new ColorFontDialog();
-            dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            // need that mainwindow has been shown.
-            dialog.Font = FontInfo.GetControlFont(Application.Current.MainWindow);
-
-            dialog.Font.Family = _appConfigSource.GetConfig().ToTypeFont.Family;
-            dialog.Font.Weight = _appConfigSource.GetConfig().ToTypeFont.Weight;
-            dialog.Font.Style = _appConfigSource.GetConfig().ToTypeFont.Style;
-            dialog.Font.Stretch = _appConfigSource.GetConfig().ToTypeFont.Stretch;
-            dialog.Font.Size = _appConfigSource.GetConfig().ToTypeFont.Size;
-            dialog.Font.BrushColor = _appConfigSource.GetConfig().ToTypeFont.BrushColor;
-
-            if (dialog.ShowDialog() == true)
-            {
-                _appConfigSource.GetConfig().LearnWordOption.FontInfo = dialog.Font;
                 _appConfigSource.SaveConfig(_appConfigSource.GetConfig());
                 _eventAggregator.GetEvent<AppConfigChangedEvent>().Publish();
             }
@@ -334,6 +348,10 @@ namespace TypeWriter.UserInterface
             _dialogService.Show("learn_word");
         }
 
+        #endregion Public Methods
+
+        #region Private Methods
+
         // 不先New Window Show，文件选择对话框会闪退。这应该是Hardcodet.NotifyIcon.Wpf的bug.
         private Window ShowBackWindow()
         {
@@ -350,5 +368,7 @@ namespace TypeWriter.UserInterface
             w.Show();
             return w;
         }
+
+        #endregion Private Methods
     }
 }

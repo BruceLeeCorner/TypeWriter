@@ -13,6 +13,8 @@ namespace TypeWriter.UserInterface
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region Fields
+
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private string _audioFolder;
         private string _audioPath;
@@ -24,6 +26,10 @@ namespace TypeWriter.UserInterface
         private HideTypeBoxEvent hideTypeBoxEvent;
         private ShowTypeBoxEvent showTypeBoxEvent;
         private bool togglePlayStatus = false;
+
+        #endregion Fields
+
+        #region Public Constructors
 
         public MainWindow()
         {
@@ -93,6 +99,10 @@ namespace TypeWriter.UserInterface
             _mediaElement.LoadedBehavior = MediaState.Manual;
             _mediaElement.MediaEnded += _mediaElement_MediaEnded;
         }
+
+        #endregion Public Constructors
+
+        #region Public Methods
 
         public void Back(int milliseconds)
         {
@@ -348,6 +358,10 @@ namespace TypeWriter.UserInterface
             togglePlayStatus = !togglePlayStatus;
         }
 
+        #endregion Public Methods
+
+        #region Protected Methods
+
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
@@ -480,6 +494,10 @@ namespace TypeWriter.UserInterface
             }
         }
 
+        #endregion Protected Methods
+
+        #region Private Methods
+
         private void _mediaElement_MediaEnded(object sender, RoutedEventArgs e)
         {
             switch (_playMode)
@@ -532,5 +550,7 @@ namespace TypeWriter.UserInterface
             TextBlock.Focus();
             this.DragMove();
         }
+
+        #endregion Private Methods
     }
 }

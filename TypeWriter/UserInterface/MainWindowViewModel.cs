@@ -1,6 +1,4 @@
-﻿using Prism.Events;
-using Prism.Mvvm;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -8,6 +6,8 @@ namespace TypeWriter.UserInterface
 {
     internal class MainWindowViewModel : BindableBase
     {
+        #region Fields
+
         private readonly AppConfigSource _appConfigSource;
         private readonly IEventAggregator _eventAggregator;
         private readonly SentenceSource _sentenceSource;
@@ -32,6 +32,10 @@ namespace TypeWriter.UserInterface
         private string _typedString;
         private Dictionary<string, byte[]> _wordAudioCache;
 
+        #endregion Fields
+
+        #region Public Constructors
+
         public MainWindowViewModel(AppConfigSource appConfigSource, SentenceSource sentenceSource, IEventAggregator eventAggregator)
         {
             _wordAudioCache = new Dictionary<string, byte[]>();
@@ -48,6 +52,10 @@ namespace TypeWriter.UserInterface
                 _eventAggregator.GetEvent<ShowTypeBoxEvent>().Publish();
             });
         }
+
+        #endregion Public Constructors
+
+        #region Public Methods
 
         public void HideTypeBox()
         {
@@ -82,6 +90,10 @@ namespace TypeWriter.UserInterface
             _sentenceSource.OnInputChar(e.Text[0]);
         }
 
+        #endregion Public Methods
+
+        #region Private Methods
+
         private void _sentenceSource_CharTyped((string typedString, string toTypeString) obj)
         {
             TypedString = obj.typedString;
@@ -109,6 +121,8 @@ namespace TypeWriter.UserInterface
             TypedFontStyle = _appConfigSource.GetConfig().TypedFont.Style;
             TypedFontWeight = _appConfigSource.GetConfig().TypedFont.Weight;
         }
+
+        #endregion Private Methods
 
         #region Properties
 

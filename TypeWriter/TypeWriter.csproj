@@ -31,7 +31,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="AppConfig.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
 		<None Update="word.csv">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

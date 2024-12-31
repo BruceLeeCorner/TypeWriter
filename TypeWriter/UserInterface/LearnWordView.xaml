@@ -1,16 +1,16 @@
 ﻿<UserControl
     x:Class="TypeWriter.UserInterface.LearnWordView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:TypeWriter.UserInterface"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:typewriter="clr-namespace:TypeWriter"
-    xmlns:xp="clr-namespace:XamlPearls;assembly=XamlPearls"
+    xmlns:local="clr-namespace:TypeWriter.UserInterface"
     d:DataContext="{d:DesignInstance local:LearnWordViewModel}"
     Loaded="UserControl_Loaded"
+    MouseRightButtonDown="TextBox_MouseRightButtonDown"
     mc:Ignorable="d">
     <UserControl.Resources>
         <typewriter:Color2BrushConverter x:Key="Color2BrushConverter" />
@@ -60,13 +60,14 @@
             VerticalAlignment="Center"
             VerticalContentAlignment="Center"
             Background="{Binding BackColor, Converter={StaticResource Color2BrushConverter}}"
+            BorderBrush="Transparent"
+            BorderThickness="0"
             Foreground="{Binding FontColor, Converter={StaticResource Color2BrushConverter}}"
-            MouseRightButtonDown="TextBox_MouseRightButtonDown"
             TextWrapping="Wrap">
             <i:Interaction.Triggers>
-                <xp:RoutedEventTrigger RoutedEvent="{x:Static TextBox.KeyUpEvent}">
+                <i:EventTrigger EventName="PreviewKeyDown">
                     <prism:InvokeCommandAction Command="{Binding KeyDownCommand}" />
-                </xp:RoutedEventTrigger>
+                </i:EventTrigger>
             </i:Interaction.Triggers>
         </TextBox>
     </Grid>

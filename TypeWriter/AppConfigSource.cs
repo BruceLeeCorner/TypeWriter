@@ -8,10 +8,16 @@ namespace TypeWriter
 {
     internal class AppConfigSource
     {
+        #region Fields
+
         private readonly JsonSerializerOptions _options;
         private readonly string _path;
         private readonly object _syncObj;
         private AppConfig _appConfig = null!;
+
+        #endregion Fields
+
+        #region Public Constructors
 
         public AppConfigSource()
         {
@@ -27,6 +33,10 @@ namespace TypeWriter
                 }
             };
         }
+
+        #endregion Public Constructors
+
+        #region Public Methods
 
         public AppConfig GetConfig()
         {
@@ -80,13 +90,13 @@ namespace TypeWriter
                 _appConfig.TypeBoxHeight = 40;
                 _appConfig.LearnWordOption = new LearnWordOption()
                 {
-                    BackColor = Colors.Orange,
+                    BackColor = Colors.Black,
                     BoxHeight = 40,
                     BoxWidth = 1000,
                     Accent = Accent.US,
                     FontInfo = new WpfColorFontDialog.FontInfo(),
                 };
-                _appConfig.LearnWordOption.FontInfo.BrushColor = new SolidColorBrush(Colors.Black);
+                _appConfig.LearnWordOption.FontInfo.BrushColor = new SolidColorBrush(Colors.White);
                 _appConfig.LearnWordOption.FontInfo.Stretch = FontStretches.Normal;
                 _appConfig.LearnWordOption.FontInfo.Weight = FontWeights.Regular;
                 _appConfig.LearnWordOption.FontInfo.Family = new FontFamily("Consolas");
@@ -97,10 +107,11 @@ namespace TypeWriter
 
         public void SaveConfig(AppConfig config)
         {
-            ArgumentNullException.ThrowIfNull(nameof(config));
             var configJson = JsonSerializer.Serialize(config, _options);
             _appConfig = JsonSerializer.Deserialize<AppConfig>(configJson, _options)!;
             File.WriteAllText(_path, configJson, Encoding.UTF8);
         }
+
+        #endregion Public Methods
     }
 }

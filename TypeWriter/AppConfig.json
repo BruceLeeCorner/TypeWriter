@@ -1,34 +1,35 @@
 ﻿{
-  "TypeBoxWidth": 620,
-  "TypeBoxHeight": 30,
+  "BackColor": "#FFFFFFFF",
+  "ToTypeFont": {
+    "Size": 20,
+    "Weight": 400,
+    "Stretch": 5,
+    "Family": "Consolas",
+    "Style": "Normal",
+    "BrushColor": "#FF000000"
+  },
+  "TypeBoxHeight": 40,
+  "TypeBoxWidth": 1000,
   "TypedFont": {
     "Size": 20,
-    "Weight": 700,
+    "Weight": 400,
     "Stretch": 5,
-    "Family": "Century",
-    "Style": "Oblique",
-    "BrushColor": "#FF2F4F4F"
-  },
-  "ToTypeFont": {
-    "Size": 12,
-    "Weight": 600,
-    "Stretch": 5,
-    "Family": "Cascadia Mono",
+    "Family": "Consolas",
     "Style": "Normal",
-    "BrushColor": "#FF2F4F4F"
+    "BrushColor": "#FF000000"
   },
-  "BackColor": "#FF213640",
   "LearnWordOption": {
-    "BackColor": "#FFFFFFFF",
+    "BackColor": "#FF000000",
     "BoxHeight": 40,
-    "BoxWidth": 1200,
+    "BoxWidth": 1000,
     "FontInfo": {
-      "Size": 12,
-      "Weight": 600,
+      "Size": 20,
+      "Weight": 400,
       "Stretch": 5,
-      "Family": "Cascadia Mono",
+      "Family": "Consolas",
       "Style": "Normal",
-      "BrushColor": "#FF2F4F4F"
-    }
+      "BrushColor": "#FFFFFFFF"
+    },
+    "Accent": 2
   }
 }

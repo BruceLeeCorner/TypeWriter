@@ -6,8 +6,6 @@ namespace TypeWriter.UserInterface
 {
     internal class MainWindowViewModel : BindableBase
     {
-        #region Fields
-
         private readonly AppConfigSource _appConfigSource;
         private readonly IEventAggregator _eventAggregator;
         private readonly SentenceSource _sentenceSource;
@@ -32,10 +30,6 @@ namespace TypeWriter.UserInterface
         private string _typedString;
         private Dictionary<string, byte[]> _wordAudioCache;
 
-        #endregion Fields
-
-        #region Public Constructors
-
         public MainWindowViewModel(AppConfigSource appConfigSource, SentenceSource sentenceSource, IEventAggregator eventAggregator)
         {
             _wordAudioCache = new Dictionary<string, byte[]>();
@@ -52,79 +46,6 @@ namespace TypeWriter.UserInterface
                 _eventAggregator.GetEvent<ShowTypeBoxEvent>().Publish();
             });
         }
-
-        #endregion Public Constructors
-
-        #region Public Methods
-
-        public void HideTypeBox()
-        {
-            _eventAggregator.GetEvent<HideTypeBoxEvent>().Publish();
-        }
-
-        public void NextSentence()
-        {
-            var next = _sentenceSource.NextSentence();
-            ToTypeString = next ?? string.Empty;
-            TypedString = string.Empty;
-        }
-
-        public void PrevSentence()
-        {
-            var prve = _sentenceSource.PrevSentence();
-            ToTypeString = prve ?? string.Empty;
-            TypedString = string.Empty;
-            //if(_isWordMode)
-            //{
-            //    PlayWordAudio()
-            //}
-        }
-
-        public void TextInput(object sender, TextCompositionEventArgs e)
-        {
-            if (e.Text[0] == ' ')
-            {
-                _eventAggregator.GetEvent<HideTypeBoxEvent>().Publish();
-                return;
-            }
-            _sentenceSource.OnInputChar(e.Text[0]);
-        }
-
-        #endregion Public Methods
-
-        #region Private Methods
-
-        private void _sentenceSource_CharTyped((string typedString, string toTypeString) obj)
-        {
-            TypedString = obj.typedString;
-            ToTypeString = obj.toTypeString;
-        }
-
-        private void AssignConfig()
-        {
-            TypeBoxHeight = _appConfigSource.GetConfig().TypeBoxHeight;
-            TypeBoxWidth = _appConfigSource.GetConfig().TypeBoxWidth;
-
-            BackColor = _appConfigSource.GetConfig().BackColor;
-
-            ToTypeFontColor = _appConfigSource.GetConfig().ToTypeFont.BrushColor.Color;
-            ToTypeFontFamily = _appConfigSource.GetConfig().ToTypeFont.Family;
-            ToTypeFontSize = _appConfigSource.GetConfig().ToTypeFont.Size;
-            ToTypeFontStretch = _appConfigSource.GetConfig().ToTypeFont.Stretch;
-            ToTypeFontStyle = _appConfigSource.GetConfig().ToTypeFont.Style;
-            ToTypeFontWeight = _appConfigSource.GetConfig().ToTypeFont.Weight;
-
-            TypedFontColor = _appConfigSource.GetConfig().TypedFont.BrushColor.Color;
-            TypedFontFamily = _appConfigSource.GetConfig().TypedFont.Family;
-            TypedFontSize = _appConfigSource.GetConfig().TypedFont.Size;
-            TypedFontStretch = _appConfigSource.GetConfig().TypedFont.Stretch;
-            TypedFontStyle = _appConfigSource.GetConfig().TypedFont.Style;
-            TypedFontWeight = _appConfigSource.GetConfig().TypedFont.Weight;
-        }
-
-        #endregion Private Methods
-
-        #region Properties
 
         public Color BackColor
         {
@@ -228,6 +149,65 @@ namespace TypeWriter.UserInterface
             set => SetProperty(ref _typedString, value);
         }
 
-        #endregion Properties
+        public void HideTypeBox()
+        {
+            _eventAggregator.GetEvent<HideTypeBoxEvent>().Publish();
+        }
+
+        public void NextSentence()
+        {
+            var next = _sentenceSource.NextSentence();
+            ToTypeString = next ?? string.Empty;
+            TypedString = string.Empty;
+        }
+
+        public void PrevSentence()
+        {
+            var prve = _sentenceSource.PrevSentence();
+            ToTypeString = prve ?? string.Empty;
+            TypedString = string.Empty;
+            //if(_isWordMode)
+            //{
+            //    PlayWordAudio()
+            //}
+        }
+
+        public void TextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (e.Text[0] == ' ')
+            {
+                _eventAggregator.GetEvent<HideTypeBoxEvent>().Publish();
+                return;
+            }
+            _sentenceSource.OnInputChar(e.Text[0]);
+        }
+
+        private void _sentenceSource_CharTyped((string typedString, string toTypeString) obj)
+        {
+            TypedString = obj.typedString;
+            ToTypeString = obj.toTypeString;
+        }
+
+        private void AssignConfig()
+        {
+            TypeBoxHeight = _appConfigSource.GetConfig().TypeBoxHeight;
+            TypeBoxWidth = _appConfigSource.GetConfig().TypeBoxWidth;
+
+            BackColor = _appConfigSource.GetConfig().BackColor;
+
+            ToTypeFontColor = _appConfigSource.GetConfig().ToTypeFont.BrushColor.Color;
+            ToTypeFontFamily = _appConfigSource.GetConfig().ToTypeFont.Family;
+            ToTypeFontSize = _appConfigSource.GetConfig().ToTypeFont.Size;
+            ToTypeFontStretch = _appConfigSource.GetConfig().ToTypeFont.Stretch;
+            ToTypeFontStyle = _appConfigSource.GetConfig().ToTypeFont.Style;
+            ToTypeFontWeight = _appConfigSource.GetConfig().ToTypeFont.Weight;
+
+            TypedFontColor = _appConfigSource.GetConfig().TypedFont.BrushColor.Color;
+            TypedFontFamily = _appConfigSource.GetConfig().TypedFont.Family;
+            TypedFontSize = _appConfigSource.GetConfig().TypedFont.Size;
+            TypedFontStretch = _appConfigSource.GetConfig().TypedFont.Stretch;
+            TypedFontStyle = _appConfigSource.GetConfig().TypedFont.Style;
+            TypedFontWeight = _appConfigSource.GetConfig().TypedFont.Weight;
+        }
     }
 }

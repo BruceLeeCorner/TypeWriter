@@ -46,4 +46,9 @@
     public class ShowTypeBoxEvent : PubSubEvent
     {
     }
+
+    public class TogglePlayWordAudioStatusEvent : PubSubEvent
+    {
+
+    }
 }

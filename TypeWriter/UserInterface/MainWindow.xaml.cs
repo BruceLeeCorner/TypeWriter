@@ -13,8 +13,6 @@ namespace TypeWriter.UserInterface
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region Fields
-
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private string _audioFolder;
         private string _audioPath;
@@ -26,10 +24,6 @@ namespace TypeWriter.UserInterface
         private HideTypeBoxEvent hideTypeBoxEvent;
         private ShowTypeBoxEvent showTypeBoxEvent;
         private bool togglePlayStatus = false;
-
-        #endregion Fields
-
-        #region Public Constructors
 
         public MainWindow()
         {
@@ -99,10 +93,6 @@ namespace TypeWriter.UserInterface
             _mediaElement.LoadedBehavior = MediaState.Manual;
             _mediaElement.MediaEnded += _mediaElement_MediaEnded;
         }
-
-        #endregion Public Constructors
-
-        #region Public Methods
 
         public void Back(int milliseconds)
         {
@@ -358,9 +348,11 @@ namespace TypeWriter.UserInterface
             togglePlayStatus = !togglePlayStatus;
         }
 
-        #endregion Public Methods
-
-        #region Protected Methods
+        public void TogglePlayWordAutioStatus()
+        {
+            App.Instance.Container.Resolve<IEventAggregator>()
+                .GetEvent<TogglePlayWordAudioStatusEvent>().Publish();
+        }
 
         protected override void OnSourceInitialized(EventArgs e)
         {
@@ -369,7 +361,7 @@ namespace TypeWriter.UserInterface
             var model = new HotKeyModel("Toggle", true, false, false, false, Keys.Space);
             try
             {
-                this.RegisterGlobalHotKey(model, (model) => { TogglePlayStatus(); });
+                this.RegisterGlobalHotKey(model, (model) => { TogglePlayStatus(); TogglePlayWordAutioStatus(); });
             }
             catch (Exception ex)
             {
@@ -494,10 +486,6 @@ namespace TypeWriter.UserInterface
             }
         }
 
-        #endregion Protected Methods
-
-        #region Private Methods
-
         private void _mediaElement_MediaEnded(object sender, RoutedEventArgs e)
         {
             switch (_playMode)
@@ -550,7 +538,5 @@ namespace TypeWriter.UserInterface
             TextBlock.Focus();
             this.DragMove();
         }
-
-        #endregion Private Methods
     }
 }

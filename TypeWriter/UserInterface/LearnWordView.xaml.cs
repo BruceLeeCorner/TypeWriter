@@ -9,16 +9,11 @@ namespace TypeWriter.UserInterface
     /// </summary>
     public partial class LearnWordView : UserControl
     {
-        #region Public Constructors
 
         public LearnWordView()
         {
             InitializeComponent();
         }
-
-        #endregion Public Constructors
-
-        #region Private Methods
 
         private void TextBox_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -30,6 +25,5 @@ namespace TypeWriter.UserInterface
             TextBox.Focus();
         }
 
-        #endregion Private Methods
     }
 }

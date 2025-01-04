@@ -14,8 +14,6 @@ namespace TypeWriter.UserInterface
 {
     internal class LearnWordViewModel : BindableBase, IDialogAware
     {
-        #region Fields
-
         private readonly AppConfigSource _appConfigSource;
         private readonly IEventAggregator _eventAggregator;
         private readonly AsyncLock _mutex = new AsyncLock();
@@ -35,18 +33,7 @@ namespace TypeWriter.UserInterface
         private FontWeight _fontWeight;
         private Logger _logger = LogManager.GetCurrentClassLogger();
         private string _word;
-
-        #endregion Fields
-
-        #region Commands
-
-        public DelegateCommand<KeyEventArgs> KeyDownCommand { get; set; }
-        public DelegateCommand NextCommand { get; set; }
-        public DelegateCommand PrevCommand { get; set; }
-
-        #endregion Commands
-
-        #region Public Constructors
+        private bool _isPaused;
 
         public LearnWordViewModel(WordSource wordSource, AppConfigSource appConfigSource, IEventAggregator eventAggregator)
         {
@@ -85,6 +72,11 @@ namespace TypeWriter.UserInterface
                 Accent = _appConfigSource.GetConfig().LearnWordOption.Accent;
             });
 
+            _eventAggregator.GetEvent<TogglePlayWordAudioStatusEvent>().Subscribe(() =>
+            {
+                _isPaused = !_isPaused;
+            });
+
             ReadPhonetic();
 
             _timer = new Timer(async (state) =>
@@ -103,15 +95,7 @@ namespace TypeWriter.UserInterface
             _timer.Change(TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan);
         }
 
-        #endregion Public Constructors
-
-        #region Events
-
         public event Action<IDialogResult> RequestClose;
-
-        #endregion Events
-
-        #region Properties
 
         public Accent Accent
         {
@@ -176,6 +160,9 @@ namespace TypeWriter.UserInterface
             set => SetProperty(ref _fontWeight, value);
         }
 
+        public DelegateCommand<KeyEventArgs> KeyDownCommand { get; set; }
+        public DelegateCommand NextCommand { get; set; }
+
         public string Phonetic
         {
             get
@@ -188,6 +175,8 @@ namespace TypeWriter.UserInterface
             }
         }
 
+        public DelegateCommand PrevCommand { get; set; }
+
         DialogCloseListener IDialogAware.RequestClose { get; }
 
         public string Title => string.Empty;
@@ -197,10 +186,6 @@ namespace TypeWriter.UserInterface
             get { return _word; }
             set { SetProperty(ref _word, value); }
         }
-
-        #endregion Properties
-
-        #region Public Methods
 
         public bool CanCloseDialog()
         {
@@ -214,10 +199,6 @@ namespace TypeWriter.UserInterface
         public void OnDialogOpened(IDialogParameters parameters)
         {
         }
-
-        #endregion Public Methods
-
-        #region Private Methods
 
         private void KeyDown(KeyEventArgs args)
         {
@@ -271,7 +252,7 @@ namespace TypeWriter.UserInterface
 
         private async Task PlayWordAudio(string word)
         {
-            if (string.IsNullOrWhiteSpace(word))
+            if (string.IsNullOrWhiteSpace(word) || _isPaused)
             {
                 return;
             }
@@ -325,7 +306,5 @@ namespace TypeWriter.UserInterface
                 _phonetics[word.ToLower()] = phoneticUS + " " + phoneticUK;
             }
         }
-
-        #endregion Private Methods
     }
 }

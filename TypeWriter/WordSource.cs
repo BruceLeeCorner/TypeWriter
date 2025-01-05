@@ -48,6 +48,7 @@ namespace TypeWriter
                 }
                 _words.Add(word.Trim());
             }
+            _index = -1;
         }
 
         public void LoadWords(string path)

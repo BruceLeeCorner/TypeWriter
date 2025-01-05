@@ -51,4 +51,14 @@
     {
 
     }
+
+    public class PlayWordAudioEvent : PubSubEvent
+    {
+
+    }
+
+    public class PauseWordAudioEvent : PubSubEvent
+    {
+
+    }
 }

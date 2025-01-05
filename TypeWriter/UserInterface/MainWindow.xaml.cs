@@ -327,7 +327,7 @@ namespace TypeWriter.UserInterface
             _mediaElement.Play();
         }
 
-        public void Start()
+        public void PlayVideoSound()
         {
             if (File.Exists(_audioPath) && _mediaElement.HasAudio)
             {
@@ -335,33 +335,44 @@ namespace TypeWriter.UserInterface
             }
         }
 
-        public void TogglePlayStatus()
-        {
-            if (togglePlayStatus)
-            {
-                Start();
-            }
-            else
-            {
-                Pause();
-            }
-            togglePlayStatus = !togglePlayStatus;
-        }
-
-        public void TogglePlayWordAutioStatus()
-        {
-            App.Instance.Container.Resolve<IEventAggregator>()
-                .GetEvent<TogglePlayWordAudioStatusEvent>().Publish();
-        }
-
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
 
-            var model = new HotKeyModel("Toggle", true, false, false, false, Keys.Space);
+            var model = new HotKeyModel("PauseSounds", true, false, false, false, Keys.Space);
             try
             {
-                this.RegisterGlobalHotKey(model, (model) => { TogglePlayStatus(); TogglePlayWordAutioStatus(); });
+                this.RegisterGlobalHotKey(model, (model) =>
+                {
+                    Pause();
+                    App.Instance.Container.Resolve<IEventAggregator>().GetEvent<PauseWordAudioEvent>().Publish();
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
+                App.Instance.TrayIcon.ShowBalloonTip(nameof(TypeWriter), $"Failed to register {model.Name}.", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Warning);
+            }
+
+            model = new HotKeyModel("PlayVideoSound", false, false, true, false, Keys.Space);
+            try
+            {
+                this.RegisterGlobalHotKey(model, (model) => { PlayVideoSound(); });
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
+                App.Instance.TrayIcon.ShowBalloonTip(nameof(TypeWriter), $"Failed to register {model.Name}.", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Warning);
+            }
+
+            model = new HotKeyModel("PlayWordAudio", true, false, true, false, Keys.Space);
+            try
+            {
+                this.RegisterGlobalHotKey(model, (model) =>
+                {
+                    App.Instance.Container.Resolve<IEventAggregator>()
+                    .GetEvent<PlayWordAudioEvent>().Publish();
+                });
             }
             catch (Exception ex)
             {

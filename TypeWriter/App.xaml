@@ -100,7 +100,7 @@
                         </MenuItem>
                     </MenuItem>
                     <!--#endregion-->
-                    <MenuItem Header="Player">
+                    <MenuItem Header="Listen Video">
                         <MenuItem Header="Select Audio">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Click">
@@ -135,7 +135,7 @@
                             </StackPanel>
                         </MenuItem>
                     </MenuItem>
-                    <MenuItem Header="Typer">
+                    <MenuItem Header="Touch-type">
                         <MenuItem Header="Select Text">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Click">

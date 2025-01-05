@@ -72,9 +72,14 @@ namespace TypeWriter.UserInterface
                 Accent = _appConfigSource.GetConfig().LearnWordOption.Accent;
             });
 
-            _eventAggregator.GetEvent<TogglePlayWordAudioStatusEvent>().Subscribe(() =>
+            _eventAggregator.GetEvent<PlayWordAudioEvent>().Subscribe(() =>
             {
-                _isPaused = !_isPaused;
+                _isPaused = false;
+            });
+
+            _eventAggregator.GetEvent<PauseWordAudioEvent>().Subscribe(() =>
+            {
+                _isPaused = true;
             });
 
             ReadPhonetic();

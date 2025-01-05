@@ -11,7 +11,6 @@ namespace TypeWriter.UserInterface
         private readonly SentenceSource _sentenceSource;
         private Color _backColor;
 
-        private bool _isWordMode;
         private Color _toTypeFontColor;
         private FontFamily _toTypeFontFamily;
         private double _toTypeFontSize;
@@ -43,6 +42,7 @@ namespace TypeWriter.UserInterface
             {
                 TypedString = string.Empty;
                 ToTypeString = string.Empty;
+                _sentenceSource.Reset();
                 _eventAggregator.GetEvent<ShowTypeBoxEvent>().Publish();
             });
         }

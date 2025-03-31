@@ -11,7 +11,6 @@ namespace TypeWriter
 
     public class AppConfig
     {
-        #region Properties
 
         public Color BackColor { get; set; }
         public LearnWordOption LearnWordOption { get; set; }
@@ -20,12 +19,10 @@ namespace TypeWriter
         public int TypeBoxWidth { get; set; }
         public FontInfo TypedFont { get; set; }
 
-        #endregion Properties
     }
 
     public class LearnWordOption
     {
-        #region Properties
 
         public Accent Accent { get; set; }
         public Color BackColor { get; set; }
@@ -33,6 +30,5 @@ namespace TypeWriter
         public int BoxWidth { get; set; }
         public FontInfo FontInfo { get; set; }
 
-        #endregion Properties
     }
 }

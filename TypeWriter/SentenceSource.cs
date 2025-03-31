@@ -4,31 +4,18 @@ namespace TypeWriter
 {
     internal class SentenceSource
     {
-        #region Fields
 
         private string[][] _allWords;
         private int _nextMatchCharIndex;
         private int _nextMatchLineIndex;
         private int _nextMatchWordIndex;
 
-        #endregion Fields
-
-        #region Public Constructors
-
         public SentenceSource()
         {
             LoadText(["Hi There! Stand With Ukraine 2024!"]);
         }
 
-        #endregion Public Constructors
-
-        #region Events
-
         public event Action<(string typedString, string toTypeString)> CharTyped;
-
-        #endregion Events
-
-        #region Properties
 
         public bool EOF
         {
@@ -73,10 +60,6 @@ namespace TypeWriter
                 // 如果是下一个单词的第一个字母，要加空格
             }
         }
-
-        #endregion Properties
-
-        #region Public Methods
 
         public void LoadText(string path)
         {
@@ -178,6 +161,5 @@ namespace TypeWriter
             _nextMatchLineIndex = 0;
         }
 
-        #endregion Public Methods
     }
 }

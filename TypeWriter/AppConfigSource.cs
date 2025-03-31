@@ -8,16 +8,11 @@ namespace TypeWriter
 {
     internal class AppConfigSource
     {
-        #region Fields
 
         private readonly JsonSerializerOptions _options;
         private readonly string _path;
         private readonly object _syncObj;
         private AppConfig _appConfig = null!;
-
-        #endregion Fields
-
-        #region Public Constructors
 
         public AppConfigSource()
         {
@@ -33,10 +28,6 @@ namespace TypeWriter
                 }
             };
         }
-
-        #endregion Public Constructors
-
-        #region Public Methods
 
         public AppConfig GetConfig()
         {
@@ -93,7 +84,7 @@ namespace TypeWriter
                     BackColor = Colors.Black,
                     BoxHeight = 40,
                     BoxWidth = 1000,
-                    Accent = Accent.US,
+                    Accent = Accent.UK,
                     FontInfo = new WpfColorFontDialog.FontInfo(),
                 };
                 _appConfig.LearnWordOption.FontInfo.BrushColor = new SolidColorBrush(Colors.White);
@@ -112,6 +103,5 @@ namespace TypeWriter
             File.WriteAllText(_path, configJson, Encoding.UTF8);
         }
 
-        #endregion Public Methods
     }
 }

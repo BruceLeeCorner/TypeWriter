@@ -9,14 +9,9 @@ namespace TypeWriter
     /// </summary>
     public partial class App
     {
-        #region Properties
 
         public static App Instance => (Application.Current as App)!;
         public TaskbarIcon TrayIcon => (TaskbarIcon)(this.FindResource("TaskbarIcon"));
-
-        #endregion Properties
-
-        #region Public Methods
 
         public bool VerifyLicense()
         {
@@ -26,10 +21,6 @@ namespace TypeWriter
             }
             return false;
         }
-
-        #endregion Public Methods
-
-        #region Protected Methods
 
         protected override Window CreateShell()
         {
@@ -60,10 +51,6 @@ namespace TypeWriter
             containerRegistry.RegisterDialogWindow<Window1>();
         }
 
-        #endregion Protected Methods
-
-        #region Private Methods
-
         private void RegisterService(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<AppConfigSource>();
@@ -77,6 +64,5 @@ namespace TypeWriter
             containerRegistry.Register<LearnWordViewModel>();
         }
 
-        #endregion Private Methods
     }
 }

@@ -6,7 +6,6 @@ namespace TypeWriter
 {
     public class Accent2BoolConverter : IValueConverter
     {
-        #region Public Methods
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -20,12 +19,10 @@ namespace TypeWriter
             throw new NotImplementedException();
         }
 
-        #endregion Public Methods
     }
 
     public class Color2BrushConverter : IValueConverter
     {
-        #region Public Methods
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -37,6 +34,5 @@ namespace TypeWriter
             throw new NotImplementedException();
         }
 
-        #endregion Public Methods
     }
 }

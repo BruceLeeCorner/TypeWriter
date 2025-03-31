@@ -7,13 +7,8 @@ namespace TypeWriter
 {
     public class FontInfoJsonConverter : System.Text.Json.Serialization.JsonConverter<FontInfo>
     {
-        #region Fields
 
         private Dictionary<string, System.Windows.FontStyle> _styles = new Dictionary<string, System.Windows.FontStyle>();
-
-        #endregion Fields
-
-        #region Public Constructors
 
         public FontInfoJsonConverter()
         {
@@ -21,10 +16,6 @@ namespace TypeWriter
             _styles.Add(nameof(FontStyles.Italic), FontStyles.Italic);
             _styles.Add(nameof(FontStyles.Oblique), FontStyles.Oblique);
         }
-
-        #endregion Public Constructors
-
-        #region Public Methods
 
         public override FontInfo? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -91,6 +82,5 @@ namespace TypeWriter
             writer.WriteEndObject();
         }
 
-        #endregion Public Methods
     }
 }

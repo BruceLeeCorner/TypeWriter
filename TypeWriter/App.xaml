@@ -139,7 +139,7 @@
                         <MenuItem Header="Select Text">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Click">
-                                    <i:CallMethodAction MethodName="SelectFile" TargetObject="{Binding}" />
+                                    <i:CallMethodAction MethodName="SelectTouchTypeFile" TargetObject="{Binding}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </MenuItem>

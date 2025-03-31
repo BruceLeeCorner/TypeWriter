@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using WpfColorFontDialog;
@@ -8,8 +7,6 @@ namespace TypeWriter.UserInterface
 {
     internal class TaskbarIconViewModel : BindableBase
     {
-        #region Fields
-
         private readonly AppConfigSource _appConfigSource;
         private readonly IDialogService _dialogService;
         private readonly IEventAggregator _eventAggregator;
@@ -19,10 +16,6 @@ namespace TypeWriter.UserInterface
         private string _textFilePath;
         private int _typeBoxHeight;
         private int _typeBoxWidth;
-
-        #endregion Fields
-
-        #region Public Constructors
 
         public TaskbarIconViewModel(IEventAggregator eventAggregator, IDialogService dialogService, AppConfigSource appConfigSource, SentenceSource sentenceSource, WordSource wordSource)
         {
@@ -78,10 +71,6 @@ namespace TypeWriter.UserInterface
             });
         }
 
-        #endregion Public Constructors
-
-        #region Properties
-
         public Color BackColor
         {
             get => _backColor;
@@ -126,10 +115,6 @@ namespace TypeWriter.UserInterface
                 }
             }
         }
-
-        #endregion Properties
-
-        #region Public Methods
 
         public void ChangeAccent(object sender, RoutedEventArgs args)
         {
@@ -180,91 +165,61 @@ namespace TypeWriter.UserInterface
 
         public void OpenTextFolder()
         {
-            Window w = new Window
-            {
-                Width = 0,
-                Height = 0,
-                WindowStyle = WindowStyle.None,
-                ShowInTaskbar = false,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                Background = Brushes.Transparent
-            };
-            w.Show();
-            w.WindowState = WindowState.Minimized;
             if (!string.IsNullOrWhiteSpace(_textFilePath))
             {
                 System.Diagnostics.Process.Start("explorer.exe", Path.GetDirectoryName(_textFilePath));
             }
             else
             {
-                MessageBox.Show("You haven't selected the file.", nameof(TypeWriter), MessageBoxButton.OK, MessageBoxImage.Information);
+                System.Windows.MessageBox.Show("You haven't selected the file.", nameof(TypeWriter), MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            w.Close();
         }
 
         public void SelectAudio()
         {
-            Window w = ShowBackWindow();
+            Ookii.Dialogs.Wpf.VistaOpenFileDialog vistaOpenFileDialog = new Ookii.Dialogs.Wpf.VistaOpenFileDialog();
+            vistaOpenFileDialog.Multiselect = false;
+            vistaOpenFileDialog.DefaultExt = "";
+            vistaOpenFileDialog.Filter = "Audio|*.mp3";
+            vistaOpenFileDialog.RestoreDirectory = true;
+            vistaOpenFileDialog.InitialDirectory = Environment.CurrentDirectory;
 
-            var openFileDialog = new OpenFileDialog
+            if (vistaOpenFileDialog.ShowDialog() == true)
             {
-                Filter = "Audio|*.mp3",
-                InitialDirectory = Environment.CurrentDirectory,
-                RestoreDirectory = true,
-                Multiselect = false,
-                DefaultExt = ".mp3"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                _eventAggregator.GetEvent<AudioSelected>().Publish(openFileDialog.FileName);
+                _eventAggregator.GetEvent<AudioSelected>().Publish(vistaOpenFileDialog.FileName);
             }
-
-            w.Close();
         }
 
-        public void SelectFile()
+        public void SelectTouchTypeFile()
         {
-            Window w = ShowBackWindow();
+            Ookii.Dialogs.Wpf.VistaOpenFileDialog vistaOpenFileDialog = new Ookii.Dialogs.Wpf.VistaOpenFileDialog();
+            vistaOpenFileDialog.Multiselect = false;
+            vistaOpenFileDialog.DefaultExt = "";
+            vistaOpenFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            vistaOpenFileDialog.RestoreDirectory = true;
+            vistaOpenFileDialog.InitialDirectory = Environment.CurrentDirectory;
 
-            var openFileDialog = new OpenFileDialog
+            if (vistaOpenFileDialog.ShowDialog() == true)
             {
-                Filter = "Text documents (.txt)|*.txt",
-                InitialDirectory = Environment.CurrentDirectory,
-                RestoreDirectory = true,
-                Multiselect = false,
-                DefaultExt = ".txt"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                _textFilePath = openFileDialog.FileName;
+                _textFilePath = vistaOpenFileDialog.FileName;
                 _sentenceSource.LoadText(_textFilePath);
                 _eventAggregator.GetEvent<NewFileLoadedEvent>().Publish();
             }
-
-            w.Close();
         }
 
         public void SelectWordFile()
         {
-            Window w = ShowBackWindow();
+            Ookii.Dialogs.Wpf.VistaOpenFileDialog vistaOpenFileDialog = new Ookii.Dialogs.Wpf.VistaOpenFileDialog();
+            vistaOpenFileDialog.Multiselect = false;
+            vistaOpenFileDialog.DefaultExt = "";
+            vistaOpenFileDialog.Filter = "word files (*.word)|*.word|txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            vistaOpenFileDialog.RestoreDirectory = true;
+            vistaOpenFileDialog.InitialDirectory = Environment.CurrentDirectory;
 
-            var openFileDialog = new OpenFileDialog
+            if (vistaOpenFileDialog.ShowDialog() == true)
             {
-                Filter = "word documents (.word)|*.word",
-                InitialDirectory = Environment.CurrentDirectory,
-                RestoreDirectory = true,
-                Multiselect = false,
-                DefaultExt = ".word"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                _wordSource.LoadWords(openFileDialog.FileName);
+                _wordSource.LoadWords(vistaOpenFileDialog.FileName);
             }
-
-            w.Close();
         }
 
         public void SetLearnWordFont()
@@ -294,7 +249,7 @@ namespace TypeWriter.UserInterface
             ColorFontDialog dialog = new ColorFontDialog();
             dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             // need that mainwindow has been shown.
-            dialog.Font = FontInfo.GetControlFont(Application.Current.MainWindow);
+            dialog.Font = FontInfo.GetControlFont(System.Windows.Application.Current.MainWindow);
 
             dialog.Font.Family = _appConfigSource.GetConfig().ToTypeFont.Family;
             dialog.Font.Weight = _appConfigSource.GetConfig().ToTypeFont.Weight;
@@ -317,7 +272,7 @@ namespace TypeWriter.UserInterface
             dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             // need that mainwindow has been shown.
-            dialog.Font = FontInfo.GetControlFont(Application.Current.MainWindow);
+            dialog.Font = FontInfo.GetControlFont(System.Windows.Application.Current.MainWindow);
 
             dialog.Font.Family = _appConfigSource.GetConfig().TypedFont.Family;
             dialog.Font.Weight = _appConfigSource.GetConfig().TypedFont.Weight;
@@ -347,28 +302,5 @@ namespace TypeWriter.UserInterface
             }
             _dialogService.Show("learn_word");
         }
-
-        #endregion Public Methods
-
-        #region Private Methods
-
-        // 不先New Window Show，文件选择对话框会闪退。这应该是Hardcodet.NotifyIcon.Wpf的bug.
-        private Window ShowBackWindow()
-        {
-            Window w = new Window
-            {
-                Width = 0,
-                Height = 0,
-                WindowStyle = WindowStyle.None,
-                ShowInTaskbar = false,
-                AllowsTransparency = true,
-                Background = Brushes.Transparent,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-            };
-            w.Show();
-            return w;
-        }
-
-        #endregion Private Methods
     }
 }
